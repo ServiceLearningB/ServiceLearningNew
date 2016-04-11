@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+	{% if form.errors %}
+		<p class="error">Invalid username or password</p>
+	{% endif %}
+	<center>
+	<form class="container EZ_logincontainer" action="/accounts/auth/" method="post">{% csrf_token %}
+		<div class="form-group">
+		<label for="username">Username:</label>
+		<input type="text" name="username" value="" id="username" class="form-control"></div>
+		<div class="form-group">
+		<label for="password">Password:</label>
+		<input type="password" name="password" value="" id="password" class="form-control"></div>
+		<center>
+		<input class="btn btn-default" type="submit" value="Login"/>
+		</center>
+	</form>
+	</center>
+{% endblock %}

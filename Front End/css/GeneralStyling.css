@@ -1,0 +1,30 @@
+.EZ_background {
+	background-color:rgb(239, 232, 216);
+}
+
+.EZ_navbar {
+	background-color:rgb(26, 187, 207);
+	color:white;
+	width:100%;
+	position: relative;
+}
+
+.EZ_logincontainer {
+	border: 1px solid grey;
+	border-radius: 6px;
+	width: 40%;
+	position:relative;
+	float: left;
+	margin-top:20px;
+	padding:20px;
+	left:30%;
+	background-color:white;
+}
+
+.EZ_logo {
+	height: 100%;
+	position: relative;
+	float: left;
+	margin-left: 10px;
+	margin-top: -8px;
+}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form id="ReportFilter" action="{% url 'faculty_view_page' %}">
+	<input name="{{ form.pk.html_name }}" value="{{ form.pk.value }}" type="search"></input>
+	<input name="{{ form.last_name.html_name }}" value="{{ form.last_name.value }}" type="search"></input>
+	<button type="submit" mane="page" value="1"></button>
+</form>
+<div class="results">
+<ul>
+	{% for SubmitReport in object_list %}
+	<li class="SubmitReport">{{ SubmitReport }}</li>
+	<p class="SubmitReport"><a href="{% url 'faculty_detail_view_page' SubmitReport.id %}">{{ SubmitReport }}</a></p>
+	{% endfor %}
+</ul>
+</div>
+{% endblock%}

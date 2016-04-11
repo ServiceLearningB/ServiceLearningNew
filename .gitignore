@@ -51,6 +51,9 @@ coverage.xml
 
 # Django stuff:
 *.log
+*.sql
+*.sqlite
+*.sqlite3
 
 # Sphinx documentation
 docs/_build/

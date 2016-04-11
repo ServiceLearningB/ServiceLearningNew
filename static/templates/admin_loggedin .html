@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+	<h2>Welcome {{username}}. You are now logged in.</h2>
+	{% csrf_token%}
+	<pre>
+	Click <a href="/accounts/logout/">here</a> to log out.
+	Click <a href="/admin/add_partner/">here</a> to add a partner organization.
+	</pre>
+
+{% endblock %}
