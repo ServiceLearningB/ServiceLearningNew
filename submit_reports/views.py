@@ -46,8 +46,8 @@ def submit_page(request):
 			save_form.first_name = student.user.first_name
 			save_form.last_name = student.user.last_name
 			save_form.save()
-			save_form.save_m2m()
-			return HttpResponseRedirect('student_logged_in_page')
+			form.save_m2m()
+			return HttpResponseRedirect('/accounts/student_view')
 	else:
 		form = SubmitReportForm()
 		form.fields['courses'].queryset = Course.objects.filter(students__in=[student])
