@@ -67,6 +67,10 @@ class FacultyManager(models.Manager):
 
 
 class Faculty(models.Model):
+	class Meta:
+		verbose_name = 'Faculty Member'
+		verbose_name_plural = 'Faculty Members'
+
 	objects = FacultyManager()
 	user = models.OneToOneField(User, null=True)
 
@@ -77,6 +81,10 @@ class Faculty(models.Model):
 ###############################################################
 
 class Staff(models.Model):
+	class Meta:
+		verbose_name = 'Teaching Assistant'
+		verbose_name_plural = 'Teaching Assistants'
+
 	user = models.OneToOneField(User, null=True)
 	courses = models.ManyToManyField('Course')
 
@@ -86,6 +94,10 @@ class Staff(models.Model):
 ################################################################
 
 class AdminStaff(models.Model):
+	class Meta:
+		verbose_name = 'Administrator'
+		verbose_name_plural = 'Administrators'
+
 	user = models.OneToOneField(User, null=True)
 
 	def __unicode__(self):
@@ -95,6 +107,10 @@ class AdminStaff(models.Model):
 ######################################################
 
 class SubmitReport(models.Model):
+	class Meta:
+		verbose_name = 'Submitted Time Sheet'
+		verbose_name_plural = 'Submitted Time Sheets'
+
 	first_name = models.CharField(max_length=30)
 	last_name = models.CharField(max_length=30)
 	start_time = models.DateTimeField(auto_now_add=False, auto_now=False, default=datetime.now)
