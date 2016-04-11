@@ -16,7 +16,10 @@ class SubmitReportForm(forms.ModelForm):
 		date_time_options = {
 			'format': 'dd/mm/yyyy HH:ii P',
 			'autoclose': True,
-			'showMeridian' : True
+			'showMeridian' : True,
+			'startView': 2,
+			'minView': 0,
+			'maxView':2,
 		}
 
 		widgets = {
@@ -27,13 +30,17 @@ class SubmitReportForm(forms.ModelForm):
 			'end_time': DateTimeWidget(options=date_time_options),
 		}
 
-		def clean(self):
-			cleaned_data = super(SubmitReportForm, self).clean()
-			start_time = cleaned_data['start_time']
-			end_time = cleaned_data['end_time']
+	def clean(self):
+		cleaned_data = super(SubmitReportForm, self).clean()
+		start_time = cleaned_data['start_time']
+		end_time = cleaned_data['end_time']
 
-			if (end_time <= start_time):
-				raise forms.ValidationError("Start time must come before end time.")
+		if (end_time <= start_time):
+			raise forms.ValidationError("Start time must come before end time.")
+
+	def __init__(self, *args, **kwargs):
+		super(SubmitReportForm, self).__init__(*args, **kwargs)
+		self.fields['summary'].label = 'Notes'
 
 
 class AddPartnerForm(forms.ModelForm):

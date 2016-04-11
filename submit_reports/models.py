@@ -113,8 +113,8 @@ class SubmitReport(models.Model):
 
 	first_name = models.CharField(max_length=30)
 	last_name = models.CharField(max_length=30)
-	start_time = models.DateTimeField(auto_now_add=False, auto_now=False, default=datetime.now)
-	end_time = models.DateTimeField(auto_now_add=False, auto_now=False, default=datetime.now)
+	start_time = models.DateTimeField(auto_now_add=False, auto_now=False, default=None)
+	end_time = models.DateTimeField(auto_now_add=False, auto_now=False, default=None)
 	courses = models.ManyToManyField('Course')
 	service_type = models.CharField(max_length=14, null=True, blank=False, choices=ServiceType, default='default')
 	status = models.CharField(max_length=8, choices=ApprovalStatus, default='PENDING', null=False, blank=False)

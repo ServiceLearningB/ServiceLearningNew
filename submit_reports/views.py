@@ -90,6 +90,7 @@ def faculty_view(request):
 		reports = form.filter_queryset(request, reports)
 		df = pd.DataFrame(list(reports.values(
 		'first_name', 'last_name', 'start_time', 'end_time', 'summary')))
+		df.columns = ['First Name', 'Last Name', 'Start', 'End', 'Notes']
 	if reports:
 		table = df.to_html(escape=False, index=False,
 		columns=['first_name', 'last_name', 'start_time', 'end_time', 'summary'],
