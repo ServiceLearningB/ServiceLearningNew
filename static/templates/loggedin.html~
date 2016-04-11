@@ -8,7 +8,7 @@
 	{% csrf_token%}
 	<div class="EZ_studentlogindiv">
 	<a href="/submit_report/" class="btn btn-default">Submit Report</a>
-	<a href="/accounts/logout/" class="btn btn-danger">Logout</a>
+	<a href="/accounts/logout/" class="btn btn-default">Logout</a>
 	
 	</div>
 </div>
