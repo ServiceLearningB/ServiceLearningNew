@@ -4,6 +4,7 @@ from django.forms import Textarea, ModelForm, widgets, RadioSelect, CheckboxSele
 from .models import SubmitReport, Partner
 from django.db import models
 from django.contrib.auth.models import User
+from datetimewidget.widgets import DateTimeWidget
 
 class SubmitReportForm(forms.ModelForm):
 	error_css_class = 'error'
@@ -12,10 +13,18 @@ class SubmitReportForm(forms.ModelForm):
 		model = SubmitReport
 		fields = ['start_time', 'end_time', 'courses', 'service_type', 'summary']
 		#exclude = ['submitter', 'status']
+		date_time_options = {
+			'format': 'dd/mm/yyyy HH:ii P',
+			'autoclose': True,
+			'showMeridian' : True
+		}
+
 		widgets = {
 			'summary': Textarea(attrs={'cols': 50, 'rows': 3}),
 			'service_type': RadioSelect(),
 			'courses': CheckboxSelectMultiple(),
+			'start_time': DateTimeWidget(options=date_time_options),
+			'end_time': DateTimeWidget(options=date_time_options),
 		}
 
 		def clean(self):
