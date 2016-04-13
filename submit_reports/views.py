@@ -36,25 +36,6 @@ def submit_page(request):
 		form.fields['courses'].queryset = Course.objects.filter(students__in=[student])
 	return render(request, "submit_report.html", {'form': form})
 
-#####################################################################
-# Because the defualt template loader won't find templates that aren't stored on files
-class Tplate(object):
-
-	    def __init__(self, template):
-	        self.template = template
-
-	    def render(self, context=None, request=None):
-	        if context is None:
-	            context = {}
-	        if request is not None:
-	            context['request'] = request
-	            context['csrf_input'] = csrf_input_lazy(request)
-	            context['csrf_token'] = csrf_token_lazy(request)
-	        return self.template.render(context)
-
-def readable_datetime(datetime):
-	return datetime.strftime("%-I:%M%p %b %d, %Y")
-
 # Faculty view of reports
 ######################################################################
 from django.template.backends.utils import csrf_input_lazy, csrf_token_lazy
@@ -74,11 +55,10 @@ def faculty_view(request):
 		df = pd.DataFrame(list(reports.values(
 		'first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
 	if reports:
-		#df.columns = ['First Name', 'Last Name', 'start_time', 'end_time', 'Notes']
 		table = df.to_html(escape=False, index=False,
 		columns=['first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary'],
 		formatters={
-			'Notes': (lambda s: '<abbr title=\"' + s + '\">Summary</abbr>'),
+			'summary': (lambda s: '<abbr title=\"' + s + '\">Notes</abbr>'),
 			# 'start_time': (lambda s: readable_datetime(s)),
 			# 'end_time': (lambda s: readable_datetime(s)),
 		})

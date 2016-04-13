@@ -1,4 +1,5 @@
 from django import forms
+from datetime import datetime
 from django.forms import MultipleChoiceField
 from django.forms import Textarea, ModelForm, TimeInput, DateInput, RadioSelect, CheckboxSelectMultiple
 from .models import SubmitReport, Partner
@@ -10,7 +11,7 @@ class SubmitReportForm(forms.ModelForm):
 	required_css_class = 'required'
 
 	start_time = forms.TimeField(input_formats=['%I:%M %p', '%H:%M'])
-	end_time = forms.TimeField(input_formats=['%I:%M %p', '%H:%M'])	
+	end_time = forms.TimeField(input_formats=['%I:%M %p', '%H:%M'])
 
 	class Meta:
 		model = SubmitReport
@@ -32,8 +33,10 @@ class SubmitReportForm(forms.ModelForm):
 		print cleaned_data
 		start_time = cleaned_data['start_time']
 		end_time = cleaned_data['end_time']
+		start_date = cleaned_data['start_date']
+		end_date = cleaned_data['end_date']
 
-		if (end_time <= start_time):
+		if (datetime.combine(end_date, end_time) <= datetime.combine(start_date, start_time)):
 			raise forms.ValidationError("Start time must come before end time.")
 		return self.cleaned_data
 
@@ -52,22 +55,24 @@ class AddStudentForm(forms.ModelForm):
 		model = User
 		fields = ['username', 'password', 'first_name', 'last_name']
 
-class ReportSearchForm(forms.Form):
+class ReportSearchForm(forms.ModelForm):
+
+	# first_name = forms.CharField(label='First Name', required=False)
+	# last_name = forms.CharField(label='Last Name', required=False)
+	# start_date = forms.CharField(label='Starts After', required=False)
+	# start_time = forms.TimeField(label='', required=False, input_formats=['%I:%M %p', '%H:%M'])
+	# end_date = forms.CharField(label='Ends Before', required=False)
+	# end_time = forms.TimeField(label='', required=False, input_formats=['%I:%M %p', '%H:%M'])
 
 	class Meta:
-
+		model = SubmitReport
+		fields = ['first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time']
 		widgets = {
 			'start_time': TimeInput(),
 			'end_time': TimeInput(),
 			'start_date': DateInput(attrs={'class': 'datepicker'}),
+			'end_date': DateInput(attrs={'class': 'datepicker'}),	
 		}
-
-	first_name = forms.CharField(label='First Name', required=False)
-	last_name = forms.CharField(label='Last Name', required=False)
-	start_time = forms.CharField(label='Starts After', required=False)
-	end_time = forms.CharField(label='Ends Before', required=False)
-	start_date = forms.CharField(label='Starts After', required=False)
-	end_date = forms.CharField(label='Ends Before', required=False)
 
 	def filter_queryset(self, request, queryset):
 		temp = queryset
@@ -76,8 +81,8 @@ class ReportSearchForm(forms.Form):
 			print queryset
 		if self.cleaned_data['last_name']:
 			temp = temp.filter(last_name__icontains=self.cleaned_data['last_name'])
-		if self.cleaned_data['start_time']:
-			temp = temp.filter(start_time__gte=self.cleaned_data['start_time'])
-		if self.cleaned_data['last_name']:
-			temp = temp.filter(end_time__lte=self.cleaned_data['end_time'])
+		if self.cleaned_data['start_date'] and self.cleaned_data['start_time']:
+			temp = temp.filter(start_date__gte=self.cleaned_data['start_date']).filter(start_time__gte=self.cleaned_data['start_time'])
+		if self.cleaned_data['end_date'] and self.cleaned_data['end_time']:
+			temp = temp.filter(end_date__gte=self.cleaned_data['end_date']).filter(start_time__gte=self.cleaned_data['end_date'])
 		return temp
