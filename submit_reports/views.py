@@ -13,23 +13,6 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 import pandas as pd
 # Create your views here.
 
-class FilteredListView(FormMixin, ListView):
-	def get_form_kwargs(self):
-		return {
-			'initial': self.get_initial(),
-			'prefix': self.get_prefix,
-			'data': self.request.GET or None
-		}
-
-	def get(self, request, *args, **kwargs):
-		self.object_list = self.get_queryset()
-		form = self.get_form(self.get_form_class())
-		if form.is_valid():
-			self.object_list = form.filter_queryset(request, self.object_list)
-
-		context = self.get_context_data(form=form, object_list=self.object_list)
-		return self.render(request, context)
-
 
 @login_required(redirect_field_name=None)
 @user_passes_test(lambda u: u.is_superuser or u.student is not None, redirect_field_name=None,
@@ -84,34 +67,27 @@ def faculty_view(request):
 	form = ReportSearchForm(request.POST)
 	courses = request.user.faculty.course_set.all()
 	df = pd.DataFrame(list(reports.values(
-		'first_name', 'last_name', 'start_time', 'end_time', 'summary')))
+		'first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
 	from django.template import Template, Context
 	if form.is_valid():
 		reports = form.filter_queryset(request, reports)
 		df = pd.DataFrame(list(reports.values(
-		'first_name', 'last_name', 'start_time', 'end_time', 'summary')))
-		df.columns = ['First Name', 'Last Name', 'Start', 'End', 'Notes']
+		'first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
 	if reports:
+		#df.columns = ['First Name', 'Last Name', 'start_time', 'end_time', 'Notes']
 		table = df.to_html(escape=False, index=False,
-		columns=['first_name', 'last_name', 'start_time', 'end_time', 'summary'],
+		columns=['first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary'],
 		formatters={
-			'summary': (lambda s: '<abbr title=\"' + s + '\">Summary</abbr>'),
-			'submitter': (lambda s: Student.objects.get(pk=s).__unicode__()),
-			'start_time': (lambda s: readable_datetime(s)),
-			'end_time': (lambda s: readable_datetime(s)),
+			'Notes': (lambda s: '<abbr title=\"' + s + '\">Summary</abbr>'),
+			# 'start_time': (lambda s: readable_datetime(s)),
+			# 'end_time': (lambda s: readable_datetime(s)),
 		})
 	else:
 		table = "No reports matched your search."
 
-	temp = Template("""<form method='POST' action=''>
-		{% csrf_token %}
-		{{form.as_p}}
-		<input type='submit' value="Search", action="">
-		</form>"""
-		+ '\n' + table)
-	template = Tplate(temp)
-	context = Context({'form': form,})
-	return HttpResponse(template.render(context=context, request=request))
+	return render(request, "faculty_view.html", {'form': form,
+			'table': table,
+		})
 
 
 #Related to login

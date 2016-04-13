@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'submit_reports',
     'pandas',
     'bootstrap3',
-    'datetimewidget',
 ]
 
 MIDDLEWARE_CLASSES = [

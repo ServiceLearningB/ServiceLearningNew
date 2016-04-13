@@ -113,8 +113,10 @@ class SubmitReport(models.Model):
 
 	first_name = models.CharField(max_length=30)
 	last_name = models.CharField(max_length=30)
-	start_time = models.DateTimeField(auto_now_add=False, auto_now=False, default=None)
-	end_time = models.DateTimeField(auto_now_add=False, auto_now=False, default=None)
+	start_date = models.DateField(auto_now_add=False, auto_now=False, default=None)
+	end_date = models.DateField(auto_now_add=False, auto_now=False, default=None)
+	start_time = models.TimeField(auto_now_add=False, auto_now=False, default=None)
+	end_time = models.TimeField(auto_now_add=False, auto_now=False, default=None)
 	courses = models.ManyToManyField('Course')
 	service_type = models.CharField(max_length=14, null=True, blank=False, choices=ServiceType, default='default')
 	status = models.CharField(max_length=8, choices=ApprovalStatus, default='PENDING', null=False, blank=False)
@@ -122,8 +124,7 @@ class SubmitReport(models.Model):
 	submitter = models.ForeignKey(Student, null=True, on_delete=models.PROTECT)
 		
 	def __unicode__(self):
-		return (self.submitter.__unicode__() + " start: " + self.start_time.strftime('%Y-%m-%d %H:%M') +
-		" end: " + self.end_time.strftime('%Y-%m-%d %H:%M'))
+		return (self.submitter.__unicode__())
 
 class Course(models.Model):
 	numeric = RegexValidator(r'^[0-9]*$', 'only numbers allowed')
