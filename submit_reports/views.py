@@ -45,13 +45,16 @@ def faculty_view(request):
 
 	reports = SubmitReport.objects.filter(courses__in=request.user.faculty.course_set.all()).distinct()
 	reports.filter(status='APPROVED')
-	form = ReportSearchForm(request.POST)
+	form = ReportSearchForm(request.POST, user_type=request.user.faculty)
 	courses = request.user.faculty.course_set.all()
-	df = pd.DataFrame(list(reports.values(
-		'first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
+	course_choices = []
+	for course in courses:
+		course_choices += [[course.pk, course]]
+	df = pd.DataFrame(list(reports.values('first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
+	form.fields['courses'].choices = course_choices
 	from django.template import Template, Context
 	if form.is_valid():
-		reports = form.filter_queryset(request, reports)
+		reports = form.filter_queryset(reports)
 		df = pd.DataFrame(list(reports.values(
 		'first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
 	if reports:

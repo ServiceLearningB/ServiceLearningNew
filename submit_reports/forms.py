@@ -7,8 +7,6 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class SubmitReportForm(forms.ModelForm):
-	error_css_class = 'error'
-	required_css_class = 'required'
 
 	start_time = forms.TimeField(input_formats=['%I:%M %p', '%H:%M'])
 	end_time = forms.TimeField(input_formats=['%I:%M %p', '%H:%M'])
@@ -29,7 +27,6 @@ class SubmitReportForm(forms.ModelForm):
 
 	def clean(self):
 		cleaned_data = super(SubmitReportForm, self).clean()
-		print cleaned_data
 		start_time = cleaned_data['start_time']
 		end_time = cleaned_data['end_time']
 		start_date = cleaned_data['start_date']
@@ -55,24 +52,30 @@ class AddStudentForm(forms.ModelForm):
 		fields = ['username', 'password', 'first_name', 'last_name']
 
 class ReportSearchForm(forms.ModelForm):
-
 	class Meta:
 		model = SubmitReport
-		fields = ['first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time']
+		fields = ['first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'courses', 'service_type', 'status']
 		widgets = {
 			'start_time': TimeInput(),
 			'end_time': TimeInput(),
 			'start_date': DateInput(attrs={'class': 'datepicker'}),
-			'end_date': DateInput(attrs={'class': 'datepicker'}),	
+			'end_date': DateInput(attrs={'class': 'datepicker'}),
+			'courses': CheckboxSelectMultiple(),
+			'service_type': RadioSelect(),
 		}
 
 	def __init__(self, *args, **kwargs):
+
+		user_type = kwargs.pop('user_type')
+
+
 		super(ReportSearchForm, self).__init__(*args, **kwargs)
 
+		self.fields['courses'].choices = user_type.course_set.all()
 		for key in self.fields:
 			self.fields[key].required = False
 
-	def filter_queryset(self, request, queryset):
+	def filter_queryset(self, queryset):
 		temp = queryset
 		if self.cleaned_data['first_name']:
 			temp = temp.filter(first_name__icontains=self.cleaned_data['first_name'])
@@ -83,4 +86,13 @@ class ReportSearchForm(forms.ModelForm):
 			temp = temp.filter(start_date__gte=self.cleaned_data['start_date']).filter(start_time__gte=self.cleaned_data['start_time'])
 		if self.cleaned_data['end_date'] and self.cleaned_data['end_time']:
 			temp = temp.filter(end_date__gte=self.cleaned_data['end_date']).filter(start_time__gte=self.cleaned_data['end_date'])
+		if self.cleaned_data['courses']:
+			temp2 = SubmitReport.objects.none()
+			for choice in self.cleaned_data['courses']:
+				temp2 = temp2 | temp.filter(courses__in=[choice])
+			temp = temp2
+		if self.cleaned_data['service_type']:
+			print('got here')
+			temp = temp.filter(service_type__exact=self.cleaned_data['service_type'])
+
 		return temp
