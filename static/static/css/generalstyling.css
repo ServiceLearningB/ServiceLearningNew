@@ -4,13 +4,81 @@
 }
 
 .EZ_navbar {
-	/*background-color:rgb(26, 187, 207);*/
-	color:white;
+	background-color:rgb(220,220,195);
+	color:black;
 	width:100%;
 	position: relative;
+	height:60px;
+	border-color:rgb(160,160,145);
+}
+
+.EZ_icon {
+	font-size:18px;
+	color:rgb(120, 120, 100);
+	text-align: center;
+	padding:8px;
+	
+}
+
+.EZ_iconcontainer {
+	width:12%;
+	position: relative;
+	float:left;
+}
+
+.EZ_loginfield {
+	width: 83%;
+}
+
+.EZ_col {
+	position: relative;
+	float: left;
+}
+
+.EZ_col h2 {
+	text-align: center;
+}
+
+.EZ_col .EZ_studentlogindiv {
+	padding: 20px;
+	width:100%;
+	position: relative;
+	float:left;
+	margin-top: 10px;
+	border: 1px grey solid;
+	border-radius:6px;
+	background-color: rgb(220,220,195);
+}
+
+.EZ_col .EZ_studentlogindiv .btn {
+	width:47%;
+	position: relative;
+	float:left;
+}
+
+.EZ_col .EZ_studentlogindiv .btn:nth-child(1) {
+	margin-right:3%;
+}
+.EZ_col .EZ_studentlogindiv .btn:nth-child(2) {
+	margin-left:3%;
+}
+
+.EZ_col p {
+	text-align: center;
 }
 
 .EZ_logincontainer {
+	border: 1px solid grey;
+	border-radius: 6px;
+	width: 100%;
+	position:relative;
+	float: left;
+	margin-top:20px;
+	padding:20px;
+	background-color:white;
+}
+
+.EZ_container {
 	border: 1px solid grey;
 	border-radius: 6px;
 	width: 100%;
@@ -23,9 +91,165 @@
 }
 
 .EZ_logo {
-	height: 100%;
+	/*height: 100%;
 	position: relative;
 	float: left;
 	margin-left: 10px;
-	margin-top: -8px;
+	margin-top: -8px;*/
+}
+
+.EZ_navbar_header {
+	position: relative;
+	float:left;
+	margin:5px;
+	color:black;
+}
+.EZ_navbar_header a:hover {
+	text-shadow: 0px 0px 2px white;
+}
+.EZ_navbar_header a:active {
+}
+.EZ_navbar_header a:focus {
+}
+.EZ_navbar_header a {
+  color:rgb(80, 80, 80) !important;
+}
+
+.SL_logo {
+	height:100%;
+	position:relative;
+	float:left;
+}
+
+.SL_logocontainer {
+	position:relative;
+	float:right;
+	right:1%;
+	width:93px;
+	height:60px;
+}
+
+.EZ_textinput, .EZ_Hoursform input[type="text"], .EZ_Hoursform textarea {
+  transition: all ease 0.5s;
+}
+.EZ_textinput:focus, .EZ_Hoursform input[type="text"]:focus {
+	box-shadow: 0px 0px 3px rgb(26,187,207) !important;
+	border-color:rgb(230, 230, 230);
+	outline:none;
+	transition: all ease 0.3s;
+}
+.EZ_Hoursform textarea:focus {
+	box-shadow: 0px 0px 3px rgb(26,187,207) !important;
+	outline:none;
+	transition: all ease 0.3s;
+}
+.EZ_textinput:hover, .EZ_Hoursform input[type="text"]:hover {
+	box-shadow: 0px 0px 1px rgb(26,187,207);
+	transition: all ease 0.5s;
+}
+.EZ_Hoursform textarea:hover {
+	box-shadow: 0px 0px 1px rgb(26,187,207);
+	transition: all ease 0.5s;
+}
+
+.EZ_Hoursform {
+}
+
+.EZ_Hoursform input[type="text"] {
+	display: block;
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+	transition: all ease 0.3s;
+}
+
+.EZ_Hoursform .errorlist {
+	color: #cc0000;
+	position: relative;
+	float: left;
+	width: 100%;
+	list-style-type: none;
+	padding: 0px;
+}
+
+.EZ_Hoursform p {
+	position: relative;
+	float: left;
+	width: 100%;
+}
+
+.EZ_Hoursform p label {
+	position: relative;
+	float: left;
+	width: 20%;
+	text-align: left;
+	margin-left: 2.5%;
+	padding-top: 3px;
+}
+
+.EZ_Hoursform p input, .EZ_Hoursform p select, .EZ_Hoursform p textarea, .EZ_Hoursform .errorlist li {
+	position: relative;
+	float: right;
+	width: 75%;
+	margin-right:2.5%;
+}
+
+.EZ_Hoursform p select {
+	border: 1px #ccc solid;
+	border-radius: 4px;
+	min-height:30px;
+}
+
+.EZ_Hoursform p select option {
+	position: relative;
+	float: left;
+	width:100%;
+	margin: auto;
+	min-height: 0px;
+	padding-top: 6px;
+	padding-bottom:6px;
+	padding-right:12px;
+	padding-left:12px;
+	
+}
+
+.EZ_Hoursform p select:active, .EZ_Hoursform p select:focus {
+	box-shadow: 0px 0px 2px rgb(26,187,207);
+	outline:none;
+	transition: all 0.3s ease;
+}
+
+.EZ_Hoursform p textarea {
+	border: 1px #ccc solid;
+	border-radius: 4px;
+	resize:vertical;
+	padding-top: 6px;
+	padding-bottom:6px;
+	padding-left:12px;
+	padding-right:12px;
+}
+
+.EZ_Hoursform p textarea:focus {
+	outline:none;
+}
+
+.EZ_Hoursform p select {
+	transition: all 0.3s ease;
+}
+
+.EZ_Hoursform .EZ_submitrow .btn {
+	width: 35%;
+	margin: 1.5%;
+}
+.EZ_Hoursform .EZ_submitrow {
+	width: 100%;
+	position:relative;
+	float: right;
+	left:10%;
 }

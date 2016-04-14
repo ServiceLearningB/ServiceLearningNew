@@ -1,11 +1,35 @@
 {% extends 'base.html' %}
 
+{% block head %}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+<script>
+$(document).ready(function() {
+    $('.datepicker').datepicker();
+});
+</script>
+
+    {{ form.media }}
+{% endblock %}
+
 {% block content %}
+<div class="col-md-3"> </div>
+<div class="col-md-6 EZ_col">
+<center>
+
+
 
 <h1>Submit Hours Report</h1>
-<form method='POST' action=''>
+<form method='POST' action='' class="container EZ_container EZ_Hoursform">
 	{% csrf_token %}
 	{{form.as_p}}
-	<input type='submit' value="Save Report", action="">
+<div class="EZ_submitrow">
+	<input class="btn btn-success" type='submit' value="Save Report" action="">
+	<input class="btn btn-warning" type='cancel' value="Cancel" action="" onclick="window.history.back()">
+</div>
 </form>
+</center>
+</div>
+
 {% endblock %}
