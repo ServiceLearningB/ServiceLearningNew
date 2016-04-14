@@ -39,12 +39,12 @@ ServiceType = (
 
 ########################################################
 class StudentManager(models.Manager):
-	def create_student_without_user(self, first_name, last_name, nuid, grad_year):
+	def create_student_without_user(self, first_name, last_name, grad_year):
 		student = self.create(first_name=first_name, last_name=last_name, grad_year=grad_year)
 		return student
 	
-	def create_student(self, user, nuid, grad_year):
-		student = self.create(user=user, first_name=user.first_name, last_name=user.last_name, nuid=nuid, grad_year=grad_year)
+	def create_student(self, user, grad_year):
+		student = self.create(user=user, first_name=user.first_name, last_name=user.last_name, grad_year=grad_year)
 		return student
 
 class Student(models.Model):
@@ -60,10 +60,10 @@ class Student(models.Model):
 ##############################################################
 
 class FacultyManager(models.Manager):
-	def create_student(self, user, nuid, grad_year):
+	def create_faculty(self, user):
 		faculty = self.create(user=user)
 		faculty.user = user
-		return student
+		return faculty
 
 
 class Faculty(models.Model):

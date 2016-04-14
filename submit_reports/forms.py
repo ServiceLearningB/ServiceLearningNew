@@ -16,7 +16,6 @@ class SubmitReportForm(forms.ModelForm):
 	class Meta:
 		model = SubmitReport
 		fields = ['start_time', 'end_time', 'start_date', 'end_date', 'courses', 'service_type', 'summary']
-		#exclude = ['submitter', 'status']
 
 		widgets = {
 			'summary': Textarea(attrs={'cols': 50, 'rows': 3}),
@@ -57,13 +56,6 @@ class AddStudentForm(forms.ModelForm):
 
 class ReportSearchForm(forms.ModelForm):
 
-	# first_name = forms.CharField(label='First Name', required=False)
-	# last_name = forms.CharField(label='Last Name', required=False)
-	# start_date = forms.CharField(label='Starts After', required=False)
-	# start_time = forms.TimeField(label='', required=False, input_formats=['%I:%M %p', '%H:%M'])
-	# end_date = forms.CharField(label='Ends Before', required=False)
-	# end_time = forms.TimeField(label='', required=False, input_formats=['%I:%M %p', '%H:%M'])
-
 	class Meta:
 		model = SubmitReport
 		fields = ['first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time']
@@ -73,6 +65,12 @@ class ReportSearchForm(forms.ModelForm):
 			'start_date': DateInput(attrs={'class': 'datepicker'}),
 			'end_date': DateInput(attrs={'class': 'datepicker'}),	
 		}
+
+	def __init__(self, *args, **kwargs):
+		super(ReportSearchForm, self).__init__(*args, **kwargs)
+
+		for key in self.fields:
+			self.fields[key].required = False
 
 	def filter_queryset(self, request, queryset):
 		temp = queryset

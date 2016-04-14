@@ -109,7 +109,7 @@ def logout_view(request):
 def student_logged_in_view(request):
 	"""Homepage for logged in users"""
 	return render(request, 'loggedin.html',
-		{'username': request.user.username})
+		{'username': request.user.username, 'is_TA': hasattr(request.user, "staff")})
 
 
 def invalid_login_view(request):
