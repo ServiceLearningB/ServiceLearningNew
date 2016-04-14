@@ -117,9 +117,8 @@ class AdminStaff(models.Model):
 ######################################################
 
 class SubmitReportManager(models.Manager):
-	def query_all_reports():
-		return SubmitReport.objects.all()
-
+	def query_pending_reports(request):
+		return SubmitReport.objects.all().filter(status="PENDING")
 
 class SubmitReport(models.Model):
 

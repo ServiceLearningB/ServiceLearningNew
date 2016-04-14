@@ -117,8 +117,10 @@ from django.template.backends.utils import csrf_input_lazy, csrf_token_lazy
 @login_required
 @user_passes_test(lambda u: u.is_superuser or u.faculty is not None)
 def ta_view(request):
-	reports = SubmitReport.objects.filter(courses__in=request.user.staff.courses.all()).distinct()
-	reports.filter(status='APPROVED')
+	
+	reports = SubmitReport.objects.query_pending_reports()
+	reports = reports.filter(courses__in=request.user.staff.courses.all()).distinct()
+
 	form = ReportSearchForm(request.POST)
 	courses = request.user.faculty.course_set.all()
 	df = pd.DataFrame(list(reports.values(
