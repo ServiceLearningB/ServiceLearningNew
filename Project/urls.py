@@ -13,19 +13,23 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 from submit_reports.views import *
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import login
+from django.views.i18n import javascript_catalog
 admin.autodiscover()
 
 urlpatterns = [
+    url(r'^admin/jsi18n/$', javascript_catalog),
     url(r'^admin/', admin.site.urls),
-    url(r'^admin/home$', admin_home_view, name='admin_home_page'),
-    url(r'^admin/add_partner$', add_partners_view, name='add_partners_page'),
-    url(r'^admin/add_student$', add_student_view, name='add_student_page'),
+    url(r'^admin/home/$', admin_home_view, name='admin_home_page'),
+    url(r'^admin/add_partner/$', add_partners_view, name='add_partners_page'),
+    url(r'^admin/add_student/$', add_student_view, name='add_student_page'),
+    url(r'^admin/add_faculty/$', add_faculty_view, name='add_faculty_page'),
+    url(r'^admin/add_course/$', add_course_view, name='add_course_page'),
     url(r'^submit_report/$', submit_page, name='submit_page'),
     url(r'^accounts/login/$', login_view, name='login_page'),
     url(r'^accounts/auth/$', auth_view, name='authorization_page'),

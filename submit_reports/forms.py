@@ -1,14 +1,14 @@
 from django import forms
 from datetime import datetime
 from django.forms import MultipleChoiceField
-from django.forms import Textarea, ModelForm, TimeInput, DateInput, RadioSelect, CheckboxSelectMultiple
-from .models import SubmitReport, Partner
+from django.forms import Textarea, ModelForm, TimeInput, DateInput, RadioSelect, CheckboxSelectMultiple, ModelMultipleChoiceField, ModelChoiceField
+from .models import SubmitReport, Partner, Course
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.admin.widgets import FilteredSelectMultiple
+
 
 class SubmitReportForm(forms.ModelForm):
-	error_css_class = 'error'
-	required_css_class = 'required'
 
 	start_time = forms.TimeField(input_formats=['%I:%M %p', '%H:%M'])
 	end_time = forms.TimeField(input_formats=['%I:%M %p', '%H:%M'])
@@ -29,7 +29,6 @@ class SubmitReportForm(forms.ModelForm):
 
 	def clean(self):
 		cleaned_data = super(SubmitReportForm, self).clean()
-		print cleaned_data
 		start_time = cleaned_data['start_time']
 		end_time = cleaned_data['end_time']
 		start_date = cleaned_data['start_date']
@@ -50,29 +49,85 @@ class AddPartnerForm(forms.ModelForm):
 		fields = ['name', 'is_active']
 
 class AddStudentForm(forms.ModelForm):
+
+	courses = ModelMultipleChoiceField(queryset=Course.objects.all(),
+		widget=FilteredSelectMultiple(("Course"), False))
+	grad_year = forms.IntegerField(min_value=datetime.now().year,
+		max_value=datetime.now().year + 4,
+		error_messages={'invalid': "Not a valid graduation year",
+		'required': "No graduation year entered",})
+
 	class Meta:
 		model = User
-		fields = ['username', 'password', 'first_name', 'last_name']
+		fields = ['username', 'first_name', 'last_name', 'email']
+
+	def __init__(self, *args, **kwargs):
+		super(AddStudentForm, self).__init__(*args, **kwargs)
+		for key in self.fields:
+	   		self.fields[key].required = True
+
+	def clean(self):
+		cleaned_data = super(AddStudentForm, self).clean()
+		cleaned_data['password'] = User.objects.make_random_password(length=10,
+			allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789')
+		print cleaned_data['password']
+
+
+
+
+class AddFacultyForm(forms.ModelForm):
+	class Meta:
+		model = User
+		fields = ['username', 'first_name', 'last_name', 'email']
+
+	def __init__(self, *args, **kwargs):
+		super(AddFacultyForm, self).__init__(*args, **kwargs)
+		for key in self.fields:
+	   		self.fields[key].required = True
+
+	def clean(self):
+		cleaned_data = super(AddFacultyForm, self).clean()
+		cleaned_data['password'] = User.objects.make_random_password(length=10,
+			allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789')
+		print cleaned_data['password']
+
+
+
+class AddCourseForm(forms.ModelForm):
+	class Meta:
+		model = Course
+		fields = '__all__'
+
+	def __init__(self, *args, **kwargs):
+		super(AddCourseForm, self).__init__(*args, **kwargs)
+		for key in self.fields:
+	   		self.fields[key].required = True
 
 class ReportSearchForm(forms.ModelForm):
-
 	class Meta:
 		model = SubmitReport
-		fields = ['first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time']
+		fields = ['first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'courses', 'service_type', 'status']
 		widgets = {
 			'start_time': TimeInput(),
 			'end_time': TimeInput(),
 			'start_date': DateInput(attrs={'class': 'datepicker'}),
-			'end_date': DateInput(attrs={'class': 'datepicker'}),	
+			'end_date': DateInput(attrs={'class': 'datepicker'}),
+			'courses': CheckboxSelectMultiple(),
+			'service_type': RadioSelect(),
 		}
 
 	def __init__(self, *args, **kwargs):
+
+		user_type = kwargs.pop('user_type')
+
+
 		super(ReportSearchForm, self).__init__(*args, **kwargs)
 
+		self.fields['courses'].choices = user_type.course_set.all()
 		for key in self.fields:
 			self.fields[key].required = False
 
-	def filter_queryset(self, request, queryset):
+	def filter_queryset(self, queryset):
 		temp = queryset
 		if self.cleaned_data['first_name']:
 			temp = temp.filter(first_name__icontains=self.cleaned_data['first_name'])
@@ -83,4 +138,13 @@ class ReportSearchForm(forms.ModelForm):
 			temp = temp.filter(start_date__gte=self.cleaned_data['start_date']).filter(start_time__gte=self.cleaned_data['start_time'])
 		if self.cleaned_data['end_date'] and self.cleaned_data['end_time']:
 			temp = temp.filter(end_date__gte=self.cleaned_data['end_date']).filter(start_time__gte=self.cleaned_data['end_date'])
+		if self.cleaned_data['courses']:
+			temp2 = SubmitReport.objects.none()
+			for choice in self.cleaned_data['courses']:
+				temp2 = temp2 | temp.filter(courses__in=[choice])
+			temp = temp2
+		if self.cleaned_data['service_type']:
+			print('got here')
+			temp = temp.filter(service_type__exact=self.cleaned_data['service_type'])
+
 		return temp

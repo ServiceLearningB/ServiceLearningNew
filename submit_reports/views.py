@@ -11,11 +11,12 @@ from django.template.context_processors import csrf
 from django.contrib.auth.decorators import login_required,user_passes_test, permission_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 import pandas as pd
+from django.core.mail import send_mail
 # Create your views here.
 
 
 @login_required(redirect_field_name=None)
-@user_passes_test(lambda u: u.is_superuser or u.student is not None, redirect_field_name=None,
+@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'student'), redirect_field_name=None,
 	login_url='/accounts/login/')
 def submit_page(request):
 	'''Page for submitting records, accessible to student users'''
@@ -40,18 +41,22 @@ def submit_page(request):
 ######################################################################
 from django.template.backends.utils import csrf_input_lazy, csrf_token_lazy
 @login_required
-@user_passes_test(lambda u: u.is_superuser or u.faculty is not None)
+@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'faculty'))
 def faculty_view(request):
 
 	reports = SubmitReport.objects.filter(courses__in=request.user.faculty.course_set.all()).distinct()
 	reports.filter(status='APPROVED')
-	form = ReportSearchForm(request.POST)
+	form = ReportSearchForm(request.POST, user_type=request.user.faculty)
 	courses = request.user.faculty.course_set.all()
-	df = pd.DataFrame(list(reports.values(
-		'first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
+	course_choices = []
+	for course in courses:
+		course_choices += [[course.pk, course]]
+
+	df = pd.DataFrame(list(reports.values('first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
+	form.fields['courses'].choices = course_choices
 	from django.template import Template, Context
 	if form.is_valid():
-		reports = form.filter_queryset(request, reports)
+		reports = form.filter_queryset(reports)
 		df = pd.DataFrame(list(reports.values(
 		'first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
 	if reports:
@@ -86,11 +91,10 @@ def auth_view(request):
 	password = request.POST.get('password', '')
 	user = auth.authenticate(username=username, password=password)
 	if user is not None:
-		if user is not None:
-			auth.login(request, user)
-		if user.student is not None:
+		auth.login(request, user)
+		if hasattr(user, 'student'):
 			return HttpResponseRedirect('/accounts/student_view/')
-		if user.faculty is not None:
+		if hasattr(user, 'faculty'):
 			return HttpResponseRedirect('/accounts/faculty_view/')
 	else:
 		return HttpResponseRedirect('/accounts/invalid/')
@@ -105,11 +109,12 @@ def logout_view(request):
 ###################################################################
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser or u.student is not None)
+@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'student'))
 def student_logged_in_view(request):
 	"""Homepage for logged in users"""
 	return render(request, 'loggedin.html',
-		{'username': request.user.username, 'is_TA': hasattr(request.user, "staff")})
+		{'username': request.user.username, 'is_TA': hasattr(request.user, "staff"),
+		'is_Student': hasattr(request.user, 'student')})
 
 
 def invalid_login_view(request):
@@ -118,7 +123,7 @@ def invalid_login_view(request):
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser or u.adminstaff is not None)
+@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'adminstaff'))
 def admin_home_view(request):
 	"""Homepage for logged in admin"""
 	return render(request, 'admin_loggedin.html',
@@ -128,7 +133,7 @@ def admin_home_view(request):
 ##########################################################################
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser or u.adminstaff is not None)
+@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'adminstaff'))
 def add_partners_view(request):
 	'''Page for adding partners'''
 	form = AddPartnerForm(request.POST or None)
@@ -136,19 +141,75 @@ def add_partners_view(request):
 		save_form = form.save(commit=False)
 		save_form.save()
 		if '_add_another' in request.POST:
-			return HttpResponseRedirect('/admin/add_partner')
-		return HttpResponseRedirect('admin_home_page')
+			return HttpResponseRedirect('/admin/add_partner/')
+		return HttpResponseRedirect('/admin/home/')
 	return render(request, "add_partner.html")
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser or u.adminstaff is not None)
+@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'adminstaff'))
 def add_student_view(request):
-	'''Page for adding partners'''
-	form = AddPartnerForm(request.POST or None)
+	'''Page for adding students'''
+	form = AddStudentForm(request.POST or None)
 	if form.is_valid():
-		save_form = form.save(commit=False)
-		save_form.save()
+		user = form.save()
+		user.set_password(form.cleaned_data['password'])
+		user.save()
+		student = Student.objects.create(user=user,
+			grad_year=form.cleaned_data['grad_year'])
+		student.courses = form.cleaned_data['courses']
+		student.save()
+		print "Student made"
+		send_mail('Service Learning Registration',
+			"""You have been registered Northeastern Service Learning to report hours for your service learning class.
+your current password is: """ + form.cleaned_data['password'] + '\n' +
+			""" Please log in to the service learning hours reporting website to change your password""",
+			'servicelearningadmin@nusl.com', [user.email,])
+
 		if '_add_another' in request.POST:
-			return HttpResponseRedirect('/admin/add_student')
-		return HttpResponseRedirect('admin_home_page')
-	return render(request, "add_student.html")
+			return HttpResponseRedirect('/admin/add_student/')
+		return HttpResponseRedirect('/admin/home/')
+	return render(request, "add_student.html", {'form': form,})
+
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'adminstaff'))
+def add_faculty_view(request):
+	'''Page for adding faculty'''
+	form = AddFacultyForm(request.POST or None)
+	if form.is_valid():
+		user = form.save()
+		user.set_password(form.cleaned_data['password'])
+		user.save()
+		faculty = Faculty.objects.create(user=user)
+		faculty.save()
+		print "Faculty made"
+		send_mail('Service Learning Registration',
+			"""You have been registered Northeastern Service Learning to view reported hours for your service learning class.
+your current password is: """ + form.cleaned_data['password'] + '\n' +
+			""" Please log in to the service learning hours reporting website to change your password""",
+			'servicelearningadmin@nusl.com', [user.email,])
+
+		if '_add_another' in request.POST:
+			return HttpResponseRedirect('/admin/add_faculty/')
+		return HttpResponseRedirect('/admin/home/')
+	return render(request, "add_faculty.html", {'form': form,})
+
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'adminstaff'))
+def add_course_view(request):
+	'''Page for adding faculty'''
+	form = AddCourseForm(request.POST or None)
+	if form.is_valid():
+		course = form.save()
+		print "Faculty made"
+		send_mail('Service Learning Registration',
+			"Your course(" + course.__unicode__() + ") has been added to Northeastern Service Learning's hours reporting database.",
+			'servicelearningadmin@nusl.com', [course.instructor.user.email,])
+
+		if '_add_another' in request.POST:
+			return HttpResponseRedirect('/admin/add_course/')
+		return HttpResponseRedirect('/admin/home/')
+	return render(request, "add_course.html", {'form': form,})

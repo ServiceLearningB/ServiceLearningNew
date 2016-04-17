@@ -18,10 +18,74 @@ $(document).ready(function() {
 <div class="col-md-3"> </div>
 <div class="col-md-6 EZ_col">
 <center>
-<form method="POST" action='' class="container EZ_container EZ_Hoursform">
+<form method="POST" action='' class="container EZ_container EZ_SearchField">
 	{% csrf_token %}
-	{{ form.as_p }}
-	<input type="submit" value="Search", action="">
+	<fieldset>
+		<label>
+			<span>
+				{{ form.first_name.label}}
+			</span>
+			{{ form.first_name }}{{ form.first_name.errors}}
+		</label>
+		<label>
+			<span>
+				{{ form.last_name.label}}
+			</span>
+			{{ form.last_name }}{{ form.last_name.errors}}
+		</label>
+	</fieldset>
+
+
+
+	<fieldset>
+		<label>
+			<span>
+				{{ form.start_date.label}}
+			</span>
+			{{ form.start_date }}{{ form.start_date.errors}}
+		</label>
+		<label>
+			<span>
+				{{ form.start_time.label}}
+			</span>
+			{{ form.start_time }}{{ form.start_time.errors}}
+		</label>
+	</fieldset>
+
+
+	<fieldset>
+		<label>
+			<span>
+				{{ form.end_date.label}}
+			</span>
+			{{ form.end_date }}{{ form.end_date.errors}}
+		</label>
+		<label>
+			<span>
+				{{ form.end_time.label}}
+			</span>
+			{{ form.end_time }}{{ form.end_time.errors}}
+		</label>
+	</fieldset>
+
+	<label>
+		<span>
+			{% for t in form.service_type %}
+			{{ t }}
+			<br>
+			{% endfor %}
+		</span>
+	</label>
+
+	<label class="EZ_SearchField">
+		{% for course in form.courses %}
+		{{course}}
+		<br>
+		{% endfor %}
+	</label>
+
+
+	<input type="submit" value="Search", action=""/>
 <table class="table table-striped">
 {{ table|safe }}
 </table>
