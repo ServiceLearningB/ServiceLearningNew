@@ -1,17 +1,95 @@
 {% extends "base.html" %}
 
+{% block head %}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+<script>
+$(document).ready(function() {
+    $('.datepicker').datepicker();
+});
+</script>
+    
+    {{ form.media }}
+
+{% endblock %}
+
 {% block content %}
-<form id="ReportFilter" action="{% url 'faculty_view_page' %}">
-	<input name="{{ form.pk.html_name }}" value="{{ form.pk.value }}" type="search"></input>
-	<input name="{{ form.last_name.html_name }}" value="{{ form.last_name.value }}" type="search"></input>
-	<button type="submit" mane="page" value="1"></button>
+<div class="col-md-3"> </div>
+<div class="col-md-6 EZ_col">
+<center>
+<form method="POST" action='' class="container EZ_container EZ_SearchField">
+	{% csrf_token %}
+	<fieldset>
+		<label>
+			<span>
+				{{ form.first_name.label}}
+			</span>
+			{{ form.first_name }}{{ form.first_name.errors}}
+		</label>
+		<label>
+			<span>
+				{{ form.last_name.label}}
+			</span>
+			{{ form.last_name }}{{ form.last_name.errors}}
+		</label>
+	</fieldset>
+
+
+
+	<fieldset>
+		<label>
+			<span>
+				{{ form.start_date.label}}
+			</span>
+			{{ form.start_date }}{{ form.start_date.errors}}
+		</label>
+		<label>
+			<span>
+				{{ form.start_time.label}}
+			</span>
+			{{ form.start_time }}{{ form.start_time.errors}}
+		</label>
+	</fieldset>
+
+
+	<fieldset>
+		<label>
+			<span>
+				{{ form.end_date.label}}
+			</span>
+			{{ form.end_date }}{{ form.end_date.errors}}
+		</label>
+		<label>
+			<span>
+				{{ form.end_time.label}}
+			</span>
+			{{ form.end_time }}{{ form.end_time.errors}}
+		</label>
+	</fieldset>
+
+	<label>
+		<span>
+			{% for t in form.service_type %}
+			{{ t }}
+			<br>
+			{% endfor %}
+		</span>
+	</label>
+
+	<label class="EZ_SearchField">
+		{% for course in form.courses %}
+		{{course}}
+		<br>
+		{% endfor %}
+	</label>
+
+
+	<input type="submit" value="Search", action=""/>
+<table class="table table-striped">
+{{ table|safe }}
+</table>
 </form>
-<div class="results">
-<ul>
-	{% for SubmitReport in object_list %}
-	<li class="SubmitReport">{{ SubmitReport }}</li>
-	<p class="SubmitReport"><a href="{% url 'faculty_detail_view_page' SubmitReport.id %}">{{ SubmitReport }}</a></p>
-	{% endfor %}
-</ul>
+</center>
 </div>
 {% endblock%}

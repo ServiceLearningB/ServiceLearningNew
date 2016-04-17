@@ -268,3 +268,7 @@
 	float: right;
 	left:10%;
 }
+
+.EZ_SearchField {
+	clear:both;
+}
