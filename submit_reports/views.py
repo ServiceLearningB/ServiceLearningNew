@@ -198,13 +198,6 @@ def add_student_view(request):
 		student.save()
 
 		if '_add_another' in request.POST:
-<<<<<<< Temporary merge branch 1
-			return HttpResponseRedirect('/admin/add_student')
-		return HttpResponseRedirect('admin_home_page')
-	return render(request, "add_student.html")
-
-=======
 			return HttpResponseRedirect('/admin/add_student/')
 		return HttpResponseRedirect('/admin/home/')
 	return render(request, "add_student.html", {'form': form,})
->>>>>>> Temporary merge branch 2
