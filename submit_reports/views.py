@@ -15,7 +15,7 @@ import pandas as pd
 
 
 @login_required(redirect_field_name=None)
-@user_passes_test(lambda u: u.is_superuser or u.student is not None, redirect_field_name=None,
+@user_passes_test(lambda u: u.is_superuser or hasattr(u, student), redirect_field_name=None,
 	login_url='/accounts/login/')
 def submit_page(request):
 	'''Page for submitting records, accessible to student users'''
@@ -40,7 +40,7 @@ def submit_page(request):
 ######################################################################
 from django.template.backends.utils import csrf_input_lazy, csrf_token_lazy
 @login_required
-@user_passes_test(lambda u: u.is_superuser or u.faculty is not None)
+@user_passes_test(lambda u: u.is_superuser or hasattr(u, faculty))
 def faculty_view(request):
 
 	reports = SubmitReport.objects.filter(courses__in=request.user.faculty.course_set.all()).distinct()
@@ -109,7 +109,7 @@ def logout_view(request):
 ###################################################################
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser or u.student is not None)
+@user_passes_test(lambda u: u.is_superuser or hasattr(u, student))
 def student_logged_in_view(request):
 	"""Homepage for logged in users"""
 	return render(request, 'loggedin.html',
@@ -122,7 +122,7 @@ def invalid_login_view(request):
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser or u.adminstaff is not None)
+@user_passes_test(lambda u: u.is_superuser or hasattr(u, adminstaff))
 def admin_home_view(request):
 	"""Homepage for logged in admin"""
 	return render(request, 'admin_loggedin.html',
@@ -132,7 +132,7 @@ def admin_home_view(request):
 ##########################################################################
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser or u.adminstaff is not None)
+@user_passes_test(lambda u: u.is_superuser or hasattr(u, adminstaff))
 def add_partners_view(request):
 	'''Page for adding partners'''
 	form = AddPartnerForm(request.POST or None)
@@ -145,7 +145,7 @@ def add_partners_view(request):
 	return render(request, "add_partner.html")
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser or u.adminstaff is not None)
+@user_passes_test(lambda u: u.is_superuser or hasattr(u, adminstaff))
 def add_student_view(request):
 	'''Page for adding students'''
 	form = AddStudentForm(request.POST or None)
