@@ -1,0 +1,14 @@
+Django==1.9.5
+django-bootstrap3==7.0.1
+<<<<<<< HEAD
+django-datetime-widget==0.9.3
+=======
+django-jquery==1.12.2
+django-mailgun==0.8.0
+>>>>>>> Development
+numpy==1.11.0
+pandas==0.18.0
+python-dateutil==2.5.2
+pytz==2016.3
+requests==2.9.1
+six==1.10.0
