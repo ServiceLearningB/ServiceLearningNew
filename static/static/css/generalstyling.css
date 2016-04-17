@@ -193,11 +193,26 @@
 	padding-top: 3px;
 }
 
-.EZ_Hoursform p input, .EZ_Hoursform p select, .EZ_Hoursform p textarea, .EZ_Hoursform .errorlist li {
+.EZ_Hoursform p input, .EZ_Hoursform p select, .EZ_Hoursform p textarea, .EZ_Hoursform .errorlist li,
+.EZ_Hoursform #id_courses, .EZ_Hoursform #id_service_type {
 	position: relative;
 	float: right;
 	width: 75%;
 	margin-right:2.5%;
+}
+
+.EZ_Hoursform #id_courses, .EZ_Hoursform #id_service_type {
+	padding-left:12px;
+	margin-top:-34px;
+}
+
+.EZ_Hoursform #id_courses li, .EZ_Hoursform #id_service_type li {
+	list-style-type:none;
+	position:relative;
+	float:left;
+	width:100%;
+	text-align:left;
+	margin-bottom:6px;
 }
 
 .EZ_Hoursform p select {
@@ -253,7 +268,10 @@
 	float: right;
 	left:10%;
 }
+<<<<<<< HEAD
 
 .EZ_SearchField {
 	clear:both;
 }
+=======
+>>>>>>> 5ae950e319addd2ceae0891140cafa0ddc6210af
