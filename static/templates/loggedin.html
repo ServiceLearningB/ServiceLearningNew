@@ -9,7 +9,9 @@
 	<div class="EZ_studentlogindiv">
 	<a href="/submit_report/" class="btn btn-default">Submit Report</a>
 	<a href="/accounts/logout/" class="btn btn-danger">Logout</a>
-	
+	{% if is_TA %}
+	<a href="/accounts/logout/" class="btn btn-danger">Approve/Reject Reports</a>
+	{% endif %}
 	</div>
 </div>
 
