@@ -1,7 +1,7 @@
 from django import forms
 from datetime import datetime
 from django.forms import MultipleChoiceField
-from django.forms import Textarea, ModelForm, TimeInput, DateInput, RadioSelect, CheckboxSelectMultiple, ModelMultipleChoiceField
+from django.forms import Textarea, ModelForm, TimeInput, DateInput, RadioSelect, CheckboxSelectMultiple, ModelMultipleChoiceField, ModelChoiceField
 from .models import SubmitReport, Partner, Course
 from django.db import models
 from django.contrib.auth.models import User
@@ -61,11 +61,47 @@ class AddStudentForm(forms.ModelForm):
 		model = User
 		fields = ['username', 'first_name', 'last_name', 'email']
 
+	def __init__(self, *args, **kwargs):
+		super(AddStudentForm, self).__init__(*args, **kwargs)
+		for key in self.fields:
+	   		self.fields[key].required = True
+
 	def clean(self):
 		cleaned_data = super(AddStudentForm, self).clean()
 		cleaned_data['password'] = User.objects.make_random_password(length=10,
 			allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789')
+		print cleaned_data['password']
 
+
+
+
+class AddFacultyForm(forms.ModelForm):
+	class Meta:
+		model = User
+		fields = ['username', 'first_name', 'last_name', 'email']
+
+	def __init__(self, *args, **kwargs):
+		super(AddFacultyForm, self).__init__(*args, **kwargs)
+		for key in self.fields:
+	   		self.fields[key].required = True
+
+	def clean(self):
+		cleaned_data = super(AddFacultyForm, self).clean()
+		cleaned_data['password'] = User.objects.make_random_password(length=10,
+			allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789')
+		print cleaned_data['password']
+
+
+
+class AddCourseForm(forms.ModelForm):
+	class Meta:
+		model = Course
+		fields = '__all__'
+
+	def __init__(self, *args, **kwargs):
+		super(AddCourseForm, self).__init__(*args, **kwargs)
+		for key in self.fields:
+	   		self.fields[key].required = True
 
 class ReportSearchForm(forms.ModelForm):
 	class Meta:

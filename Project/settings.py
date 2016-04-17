@@ -127,10 +127,11 @@ STATIC_URL = '/static/'
 
 LOGIN_URL = '/accounts/login/'
 
-# Django Mailgun config
-EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
-MAILGUN_ACCESS_KEY = 'ACCESS-KEY' ## replace with mailgun acount's api key
-MAILGUN_SERVER_NAME = 'SERVER-NAME'
+# # Django Mailgun config
+# EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
+# MAILGUN_ACCESS_KEY = 'ACCESS-KEY' ## replace with mailgun acount's api key
+# MAILGUN_SERVER_NAME = 'SERVER-NAME'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 #TEMPLATE_DEBUG = True
 if DEBUG:
