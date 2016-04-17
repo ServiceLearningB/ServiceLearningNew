@@ -90,11 +90,10 @@ def auth_view(request):
 	password = request.POST.get('password', '')
 	user = auth.authenticate(username=username, password=password)
 	if user is not None:
-		if user is not None:
-			auth.login(request, user)
-		if user.student is not None:
+		auth.login(request, user)
+		if hasattr(user, student):
 			return HttpResponseRedirect('/accounts/student_view/')
-		if user.faculty is not None:
+		if hasattr(user, faculty):
 			return HttpResponseRedirect('/accounts/faculty_view/')
 	else:
 		return HttpResponseRedirect('/accounts/invalid/')
