@@ -1,10 +1,12 @@
 from django import forms
 from datetime import datetime
 from django.forms import MultipleChoiceField
-from django.forms import Textarea, ModelForm, TimeInput, DateInput, RadioSelect, CheckboxSelectMultiple
-from .models import SubmitReport, Partner
+from django.forms import Textarea, ModelForm, TimeInput, DateInput, RadioSelect, CheckboxSelectMultiple, ModelMultipleChoiceField
+from .models import SubmitReport, Partner, Course
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.admin.widgets import FilteredSelectMultiple
+
 
 class SubmitReportForm(forms.ModelForm):
 
@@ -47,9 +49,23 @@ class AddPartnerForm(forms.ModelForm):
 		fields = ['name', 'is_active']
 
 class AddStudentForm(forms.ModelForm):
+
+	courses = ModelMultipleChoiceField(queryset=Course.objects.all(),
+		widget=FilteredSelectMultiple(("Course"), False))
+	grad_year = forms.IntegerField(min_value=datetime.now().year,
+		max_value=datetime.now().year + 4,
+		error_messages={'invalid': "Not a valid graduation year",
+		'required': "No graduation year entered",})
+
 	class Meta:
 		model = User
-		fields = ['username', 'password', 'first_name', 'last_name']
+		fields = ['username', 'first_name', 'last_name', 'email']
+
+	def clean(self):
+		cleaned_data = super(AddStudentForm, self).clean()
+		cleaned_data['password'] = User.objects.make_random_password(length=10,
+			allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789')
+
 
 class ReportSearchForm(forms.ModelForm):
 	class Meta:

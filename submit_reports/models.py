@@ -40,15 +40,19 @@ ServiceType = (
 ########################################################
 class StudentManager(models.Manager):
 	def create_student_without_user(self, first_name, last_name, grad_year):
-		student = self.create(first_name=first_name, last_name=last_name, grad_year=grad_year)
+		student = self.create(first_name=first_name,
+			last_name=last_name,
+			grad_year=grad_year)
 		return student
 	
 	def create_student(self, user, grad_year):
-		student = self.create(user=user, first_name=user.first_name, last_name=user.last_name, grad_year=grad_year)
+		student = self.create(user=user, first_name=user.first_name,
+			last_name=user.last_name,
+			grad_year=grad_year)
 		return student
 
 class Student(models.Model):
-	objects= StudentManager()
+	#objects= StudentManager()
 	numeric = RegexValidator(r'^[0-9]*$', 'only numbers allowed')
 	user = models.OneToOneField(User, null=True, unique=True, on_delete=models.SET_NULL)
 	courses = models.ManyToManyField('Course', related_name='students')

@@ -70,7 +70,10 @@ $(document).ready(function() {
 
 	<label>
 		<span>
-			Service Type {{ form.service_type }}
+			{% for t in form.service_type %}
+			{{ t }}
+			<br>
+			{% endfor %}
 		</span>
 	</label>
 

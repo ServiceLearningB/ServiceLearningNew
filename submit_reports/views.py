@@ -50,6 +50,7 @@ def faculty_view(request):
 	course_choices = []
 	for course in courses:
 		course_choices += [[course.pk, course]]
+
 	df = pd.DataFrame(list(reports.values('first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
 	form.fields['courses'].choices = course_choices
 	from django.template import Template, Context
@@ -139,19 +140,23 @@ def add_partners_view(request):
 		save_form = form.save(commit=False)
 		save_form.save()
 		if '_add_another' in request.POST:
-			return HttpResponseRedirect('/admin/add_partner')
-		return HttpResponseRedirect('admin_home_page')
+			return HttpResponseRedirect('/admin/add_partner/')
+		return HttpResponseRedirect('/admin/home/')
 	return render(request, "add_partner.html")
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser or u.adminstaff is not None)
 def add_student_view(request):
-	'''Page for adding partners'''
-	form = AddPartnerForm(request.POST or None)
+	'''Page for adding students'''
+	form = AddStudentForm(request.POST or None)
 	if form.is_valid():
-		save_form = form.save(commit=False)
-		save_form.save()
+		user = form.save()
+		student = Student.objects.create(user=user,
+			grad_year=form.cleaned_data['grad_year'])
+		student.courses = form.cleaned_data['courses']
+		student.save()
+
 		if '_add_another' in request.POST:
-			return HttpResponseRedirect('/admin/add_student')
-		return HttpResponseRedirect('admin_home_page')
-	return render(request, "add_student.html")
+			return HttpResponseRedirect('/admin/add_student/')
+		return HttpResponseRedirect('/admin/home/')
+	return render(request, "add_student.html", {'form': form,})
