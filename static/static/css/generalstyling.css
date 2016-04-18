@@ -170,6 +170,46 @@
 	padding: 0px;
 }
 
+/* Date and time fields */
+.EZ_Hoursform div:nth-child(2) {
+	width: 50%;
+	position: relative;
+	float: left;
+	text-align: left;
+	font-weight: bold;
+}
+/* Date and time inputs */
+.EZ_Hoursform div:nth-child(2) input {
+  width:100%;
+	position: relative;
+	margin-top:6px;
+	margin-bottom: 6px;
+	font-weight: normal;
+}
+/* Start Time input */
+.EZ_Hoursform div:nth-child(2) input:nth-child(2) {
+	margin-bottom:-12px;
+}
+/* Course Select, Service Type Select and Partner select container */
+.EZ_Hoursform div:nth-child(3), .EZ_Hoursform div:nth-child(4), 
+.EZ_Hoursform div:nth-child(5) {
+	width:50%;
+	position: relative;
+	float: right;
+	padding-left: 4%;
+	padding-right: 2.5%;
+	text-align: left;
+	margin-top:-20px;
+	font-weight: bold;
+	margin-bottom: 6px;
+}
+
+/* Course Select, Service Type Select and Partner select options */
+.EZ_Hoursform div:nth-child(3) label, .EZ_Hoursform div:nth-child(4) label, 
+.EZ_Hoursform div:nth-child(5) select {
+	font-weight: normal;
+}
+
 .EZ_Hoursform p {
 	position: relative;
 	float: left;
@@ -258,7 +298,7 @@
 	width: 100%;
 	position:relative;
 	float: right;
-	left:10%;
+	margin-top:6px;
 }
 
 .EZ_courseSelect {
