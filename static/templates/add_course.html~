@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<center>
+<h1>Add a Faculty Member</h1>
+<form method='POST' action=''>
+	{% csrf_token %}
+	{{form.as_p}}
+	<input type='submit' value="Save Faculty", action="">
+	<input type="submit" value="Save and add another", name="_add_another">
+</form>
+</center>
+{% endblock %}

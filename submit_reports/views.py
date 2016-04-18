@@ -16,7 +16,7 @@ from django.core.mail import send_mail
 
 
 @login_required(redirect_field_name=None)
-@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'student'), redirect_field_name=None,
+@user_passes_test(lambda u: hasattr(u, 'student'), redirect_field_name=None,
 	login_url='/accounts/login/')
 def submit_page(request):
 	'''Page for submitting records, accessible to student users'''
@@ -41,7 +41,7 @@ def submit_page(request):
 ######################################################################
 from django.template.backends.utils import csrf_input_lazy, csrf_token_lazy
 @login_required
-@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'faculty'))
+@user_passes_test(lambda u: hasattr(u, 'faculty'))
 def faculty_view(request):
 
 	reports = SubmitReport.objects.filter(courses__in=request.user.faculty.course_set.all()).distinct()
@@ -109,7 +109,7 @@ def logout_view(request):
 ###################################################################
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'student'))
+@user_passes_test(lambda u: hasattr(u, 'student'))
 def student_logged_in_view(request):
 	"""Homepage for logged in users"""
 	return render(request, 'loggedin.html',
@@ -123,7 +123,7 @@ def invalid_login_view(request):
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'adminstaff'))
+@user_passes_test(lambda u: u.is_superuser)
 def admin_home_view(request):
 	"""Homepage for logged in admin"""
 	return render(request, 'admin_loggedin.html',
@@ -133,7 +133,7 @@ def admin_home_view(request):
 ##########################################################################
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'adminstaff'))
+@user_passes_test(lambda u: u.is_superuser)
 def add_partners_view(request):
 	'''Page for adding partners'''
 	form = AddPartnerForm(request.POST or None)
@@ -143,10 +143,10 @@ def add_partners_view(request):
 		if '_add_another' in request.POST:
 			return HttpResponseRedirect('/admin/add_partner/')
 		return HttpResponseRedirect('/admin/home/')
-	return render(request, "add_partner.html")
+	return render(request, "add_partner.html", {'form': form})
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'adminstaff'))
+@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'staff'))
 def add_student_view(request):
 	'''Page for adding students'''
 	form = AddStudentForm(request.POST or None)
@@ -158,6 +158,8 @@ def add_student_view(request):
 			grad_year=form.cleaned_data['grad_year'])
 		student.courses = form.cleaned_data['courses']
 		student.save()
+		if form.fields['is_TA'] == True:
+			TA = Staff(user=user, courses = form.cleaned_data['courses'])
 		print "Student made"
 		send_mail('Service Learning Registration',
 			"""You have been registered Northeastern Service Learning to report hours for your service learning class.
@@ -173,7 +175,7 @@ your current password is: """ + form.cleaned_data['password'] + '\n' +
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'adminstaff'))
+@user_passes_test(lambda u: u.is_superuser)
 def add_faculty_view(request):
 	'''Page for adding faculty'''
 	form = AddFacultyForm(request.POST or None)
@@ -196,9 +198,8 @@ your current password is: """ + form.cleaned_data['password'] + '\n' +
 	return render(request, "add_faculty.html", {'form': form,})
 
 
-
 @login_required
-@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'adminstaff'))
+@user_passes_test(lambda u: u.is_superuser)
 def add_course_view(request):
 	'''Page for adding faculty'''
 	form = AddCourseForm(request.POST or None)
@@ -213,3 +214,34 @@ def add_course_view(request):
 			return HttpResponseRedirect('/admin/add_course/')
 		return HttpResponseRedirect('/admin/home/')
 	return render(request, "add_course.html", {'form': form,})
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def admin_view(request):
+	reports = SubmitReport.objects.all()
+	form = ReportSearchForm(request.POST)
+	courses = Course.objects.all()
+	course_choices = []
+	for course in courses:
+		course_choices += [[course.pk, course]]
+
+	df = pd.DataFrame(list(reports.values('first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
+	form.fields['courses'].choices = course_choices
+	if form.is_valid():
+		reports = form.filter_queryset(reports)
+		df = pd.DataFrame(list(reports.values(
+		'first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
+	if reports:
+		table = df.to_html(escape=False, index=False,
+		columns=['first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary'],
+		formatters={
+			'summary': (lambda s: '<abbr title=\"' + s + '\">Notes</abbr>'),
+			# 'start_time': (lambda s: readable_datetime(s)),
+			# 'end_time': (lambda s: readable_datetime(s)),
+		})
+	else:
+		table = "No reports matched your search."
+
+	return render(request, "admin_view.html", {'form': form,
+			'table': table,
+		})
