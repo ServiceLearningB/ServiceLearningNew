@@ -280,8 +280,25 @@
 .EZ_serviceTypeSelect, .EZ_courseSelect, .EZ_facultyEndDates label, .EZ_facultyStartDates label {
 	margin-top: 10px;
 } 
+.EZ_courseSelect select {
+	width:100%;
+}
+
+.EZ_courseSelect select option {
+	padding-left: 12px;
+	padding-right: 12px;
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+.EZ_serviceTypeSelect span label {
+	margin-top:6px;
+	margin-bottom: 6px;
+}
+
 .EZ_courseSelect {
-	margin-top:-114px;
+	margin-top:-136px !important;
+	margin-bottom: 12px;
 }
 
 .EZ_facultyEndDates input, .EZ_facultyStartDates input, .EZ_facultyNameSearch input, 
@@ -299,7 +316,7 @@
 	position: relative;
 	float: left;
 	width:100%;
-	padding-top:8px;
+	padding-top:14px;
 	text-align:center;
 }
 
