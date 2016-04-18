@@ -158,6 +158,8 @@ def add_student_view(request):
 			grad_year=form.cleaned_data['grad_year'])
 		student.courses = form.cleaned_data['courses']
 		student.save()
+		if form.fields['is_TA'] == True:
+			TA = Staff(user=user, courses = form.cleaned_data['courses'])
 		print "Student made"
 		send_mail('Service Learning Registration',
 			"""You have been registered Northeastern Service Learning to report hours for your service learning class.
@@ -194,7 +196,6 @@ your current password is: """ + form.cleaned_data['password'] + '\n' +
 			return HttpResponseRedirect('/admin/add_faculty/')
 		return HttpResponseRedirect('/admin/home/')
 	return render(request, "add_faculty.html", {'form': form,})
-
 
 
 @login_required
