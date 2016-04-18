@@ -14,7 +14,7 @@ class SubmitReportForm(forms.ModelForm):
 
 	class Meta:
 		model = SubmitReport
-		exclude= ['submitter', 'status']
+		exclude= ['submitter', 'status', 'first_name', 'last_name']
 		widgets = {
 			'summary': Textarea(attrs={'cols': 50, 'rows': 3}),
 			'service_type': RadioSelect(),
@@ -47,7 +47,11 @@ class SubmitReportForm(forms.ModelForm):
 class AddPartnerForm(forms.ModelForm):
 	class Meta:
 		model = Partner
-		fields = ['name', 'is_active']
+		fields = ['name', 'is_active', 'courses']
+		widgets = {
+			'courses': FilteredSelectMultiple(("Courses"), False),
+		}
+
 
 class AddStudentForm(forms.ModelForm):
 	is_TA = BooleanField(label="Is this student a TA")
@@ -107,13 +111,13 @@ class AddCourseForm(forms.ModelForm):
 class ReportSearchForm(forms.ModelForm):
 	class Meta:
 		model = SubmitReport
-		fields = '__all__'
+		exclude = ['summary', 'status']
 		widgets = {
 			'start_time': TimeInput(),
 			'end_time': TimeInput(),
 			'start_date': DateInput(attrs={'class': 'datepicker'}),
 			'end_date': DateInput(attrs={'class': 'datepicker'}),
-			'courses': FilteredSelectMultiple(("Course"), False),
+			'courses': FilteredSelectMultiple(("Courses"), False),
 			'service_type': RadioSelect(),
 		}
 
@@ -123,8 +127,10 @@ class ReportSearchForm(forms.ModelForm):
 			user_type = kwargs.pop('user_type')
 
 		super(ReportSearchForm, self).__init__(*args, **kwargs)
-		if user_type is not None:
+		if hasattr(user_type, 'course_set'):
 			self.fields['courses'].choices = user_type.course_set.all()
+		elif hasattr(user_type, 'courses'):
+			self.fields['courses'].choices = user_type.courses.all()
 		else:
 			self.fields['courses'].choices = Course.objects.all()
 		for key in self.fields:
@@ -153,8 +159,17 @@ class ReportSearchForm(forms.ModelForm):
 		if self.cleaned_data['service_type']:
 			print('got here')
 			temp = temp.filter(service_type__exact=self.cleaned_data['service_type'])
-		if self.cleaned_data['status']:
-			temp = temp.filter(status__exact=self.cleaned_data['service_type'])
+		# if self.cleaned_data['status']:
+		# 	temp = temp.filter(status__exact=self.cleaned_data['service_type'])
 		if self.cleaned_data['partner']:
 			temp = temp.filter(partner__exact=self.cleaned_data['partner'])
 		return temp
+
+
+class ReportApproveForm(forms.ModelForm):
+	class Meta:
+		model = SubmitReport
+		fields = ['status']
+		widgets = {
+			'status': CheckboxSelectMultiple()
+		}
