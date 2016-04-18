@@ -2,11 +2,19 @@
 
 {% block content %}
 
+<div class="col-md-4"> </div>
+<div class="col-md-4 EZ_col">
 	<h2>Welcome {{username}}. You are now logged in.</h2>
 	{% csrf_token%}
-	<pre>
-	Click <a href="/accounts/logout/">here</a> to log out.
-	Click <a href="/submit_report/">here</a> to submit a report.
-	</pre>
+	<div class="EZ_studentlogindiv">
+	{% if is_Student %}
+	<a href="/submit_report/" class="btn btn-default">Submit Report</a>
+	<a href="/accounts/logout/" class="btn btn-danger">Logout</a>
+	{% endif %}
+	{% if is_TA %}
+	<a href="/accounts/logout/" class="btn btn-danger">Approve/Reject Reports</a>
+	{% endif %}
+	</div>
+</div>
 
 {% endblock %}
