@@ -62,6 +62,13 @@
 .EZ_col .EZ_studentlogindiv .btn:nth-child(2) {
 	margin-left:3%;
 }
+.EZ_col .EZ_studentlogindiv .btn:nth-child(3) {
+	margin-top:12px;
+	width:75% !important;
+	position: relative;
+	float: left;
+	left:12.5%;
+}
 
 .EZ_col p {
 	text-align: center;
@@ -170,6 +177,46 @@
 	padding: 0px;
 }
 
+/* Date and time fields */
+.EZ_Hoursform div:nth-child(2) {
+	width: 50%;
+	position: relative;
+	float: left;
+	text-align: left;
+	font-weight: bold;
+}
+/* Date and time inputs */
+.EZ_Hoursform div:nth-child(2) input {
+  width:100%;
+	position: relative;
+	margin-top:6px;
+	margin-bottom: 6px;
+	font-weight: normal;
+}
+/* Start Time input */
+.EZ_Hoursform div:nth-child(2) input:nth-child(2) {
+	margin-bottom:-12px;
+}
+/* Course Select, Service Type Select and Partner select container */
+.EZ_Hoursform div:nth-child(3), .EZ_Hoursform div:nth-child(4), 
+.EZ_Hoursform div:nth-child(5) {
+	width:50%;
+	position: relative;
+	float: right;
+	padding-left: 4%;
+	padding-right: 2.5%;
+	text-align: left;
+	margin-top:-20px;
+	font-weight: bold;
+	margin-bottom: 6px;
+}
+
+/* Course Select, Service Type Select and Partner select options */
+.EZ_Hoursform div:nth-child(3) label, .EZ_Hoursform div:nth-child(4) label, 
+.EZ_Hoursform div:nth-child(5) select {
+	font-weight: normal;
+}
+
 .EZ_Hoursform p {
 	position: relative;
 	float: left;
@@ -254,11 +301,12 @@
 	width: 35%;
 	margin: 1.5%;
 }
+
 .EZ_Hoursform .EZ_submitrow {
 	width: 100%;
 	position:relative;
 	float: right;
-	left:10%;
+	margin-top:6px;
 }
 
 .EZ_courseSelect {
@@ -280,8 +328,25 @@
 .EZ_serviceTypeSelect, .EZ_courseSelect, .EZ_facultyEndDates label, .EZ_facultyStartDates label {
 	margin-top: 10px;
 } 
+.EZ_courseSelect select {
+	width:100%;
+}
+
+.EZ_courseSelect select option {
+	padding-left: 12px;
+	padding-right: 12px;
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+.EZ_serviceTypeSelect span label {
+	margin-top:6px;
+	margin-bottom: 6px;
+}
+
 .EZ_courseSelect {
-	margin-top:-114px;
+	margin-top:-136px !important;
+	margin-bottom: 12px;
 }
 
 .EZ_facultyEndDates input, .EZ_facultyStartDates input, .EZ_facultyNameSearch input, 
@@ -299,7 +364,7 @@
 	position: relative;
 	float: left;
 	width:100%;
-	padding-top:8px;
+	padding-top:14px;
 	text-align:center;
 }
 
