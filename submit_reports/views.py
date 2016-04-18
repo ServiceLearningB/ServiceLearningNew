@@ -100,24 +100,27 @@ def ta_view(request):
 	reports = SubmitReport.objects.query_pending_reports()
 	reports = reports.filter(courses__in=request.user.staff.courses.all()).distinct()
 
-	form = ReportSearchForm(request.POST, user_type=request.user.faculty)
-	courses = request.user.faculty.course_set.all()
+	form = ReportSearchForm(request.POST, user_type=request.user.staff)
+	courses = request.user.staff.courses.all()
 	course_choices = []
 	for course in courses:
 		course_choices += [[course.pk, course]]
 
-	df = pd.DataFrame(list(reports.values('first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
+	df = pd.DataFrame(list(reports.values('pk','first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
 	form.fields['courses'].choices = course_choices
 	from django.template import Template, Context
 	if form.is_valid():
 		reports = form.filter_queryset(reports)
 		df = pd.DataFrame(list(reports.values(
-		'first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
+		'pk','first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
 	if reports:
 		table = df.to_html(escape=False, index=False,
-		columns=['first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary'],
+		columns=['pk', 'first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary'],
 		formatters={
+
 			'summary': (lambda s: '<abbr title=\"' + s + '\">Notes</abbr>'),
+			'pk': (lambda r: form_to_html(ReportApproveForm(request.POST or None, instance=SubmitReport.objects.get(pk=r)))),
+
 			# 'start_time': (lambda s: readable_datetime(s)),
 			# 'end_time': (lambda s: readable_datetime(s)),
 		})
@@ -128,8 +131,13 @@ def ta_view(request):
 			'table': table,
 		})
 
-
-
+def form_to_html(form):
+	if form.is_valid():
+		SubmitReport.objects.get(pk=form.instance.pk)
+	return form.as_p()
+# def ta_view(request):
+# 	form = ReportApproveForm(request.POST or None)
+# 	return render(request, "add_staff.html", {'form': form,})
 #Related to login
 ##############################################################
 

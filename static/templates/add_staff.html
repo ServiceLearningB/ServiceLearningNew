@@ -1,10 +1,5 @@
 {% extends 'base.html' %}
 
-{% block head %}
-<script type="text/javascript" src="/static/js/django-admin-multiselect.js"></script>
-<link href="/static/css/django-admin-widgets.css" rel="stylesheet" type="text/css">
-{{ form.media }}
-{% endblock %}
 
 {% block content %}
 <center>
@@ -12,8 +7,7 @@
 <form method='POST' action=''>
 	{% csrf_token %}
 	{{form.as_p}}
-	<input type='submit' value="Save Staff", action="">
-	<input type="submit" value="Save and add another", name="_add_another">
+
 </form>
 </center>
 {% endblock %}

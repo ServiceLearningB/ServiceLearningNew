@@ -127,8 +127,10 @@ class ReportSearchForm(forms.ModelForm):
 			user_type = kwargs.pop('user_type')
 
 		super(ReportSearchForm, self).__init__(*args, **kwargs)
-		if user_type is not None:
+		if hasattr(user_type, 'course_set'):
 			self.fields['courses'].choices = user_type.course_set.all()
+		elif hasattr(user_type, 'courses'):
+			self.fields['courses'].choices = user_type.courses.all()
 		else:
 			self.fields['courses'].choices = Course.objects.all()
 		for key in self.fields:
@@ -162,3 +164,12 @@ class ReportSearchForm(forms.ModelForm):
 		if self.cleaned_data['partner']:
 			temp = temp.filter(partner__exact=self.cleaned_data['partner'])
 		return temp
+
+
+class ReportApproveForm(forms.ModelForm):
+	class Meta:
+		model = SubmitReport
+		fields = ['status']
+		widgets = {
+			'status': CheckboxSelectMultiple()
+		}
