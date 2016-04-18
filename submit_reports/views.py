@@ -225,7 +225,7 @@ def admin_view(request):
 	for course in courses:
 		course_choices += [[course.pk, course]]
 
-	df = pd.DataFrame(list(reports.values('first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
+	df = pd.DataFrame(list(reports.values('pk', 'first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
 	form.fields['courses'].choices = course_choices
 	if form.is_valid():
 		reports = form.filter_queryset(reports)

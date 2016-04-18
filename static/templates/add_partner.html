@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 
+{% block head %}
+<script type="text/javascript" src="/static/js/django-admin-multiselect.js"></script>
+<link href="/static/css/django-admin-widgets.css" rel="stylesheet" type="text/css">
+{{ form.media }}
+{% endblock %}
+
 {% block content %}
 
 <center>

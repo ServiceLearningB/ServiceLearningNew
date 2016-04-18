@@ -23,32 +23,7 @@ $(document).ready(function() {
 <h1>Submit Hours Report</h1>
 <form method='POST' action='' class="container EZ_container EZ_Hoursform">
 	{% csrf_token %}
-	<div>
-		Start Date {{ form.start_date }} Start Time {{ form.start_time }} <br>
-		End Date {{ form.end_date }} End Time {{ form.end_time }}
-	</div>
-	<div>
-	<span>
-		<br>Course<br>
-	</span>
-		{% for course in form.courses %}
-		{{ course }}<br>
-		{% endfor %}
-	</div>
-	<div>
-	<span>
-		<br>Service Type<br>
-	</span>
-		{% for type in form.service_type %}
-		{{ type }}<br>
-		{% endfor %}
-	</div>
-	<div>
-		<span>
-			<br>Partner<br>
-		</span>
-		{{ form.partner }}
-	</div>
+{{ form }}
 
 
 
