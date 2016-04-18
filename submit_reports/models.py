@@ -28,9 +28,9 @@ ApprovalStatus = (
 
 ServiceType = (
 		('DIRECT_SERVICE', 'Direct Service'),
-		('TRAINING', 'Training'),
-		('IND_RESEARCH', 'Individual Research'),
-		('TEAM_RESEARCH', 'Team Research'),
+		('TRAINING', 'Trainings & Orientations'),
+		('IND_RESEARCH', 'Individual Research & Planning'),
+		('TEAM_RESEARCH', 'Team Research & Planning'),
 	)
 
 # User Classes
@@ -58,6 +58,8 @@ class Student(models.Model):
 	courses = models.ManyToManyField('Course', related_name='students')
 	grad_year = models.CharField(validators=[numeric], max_length=4, null=True)
 	objects= StudentManager()
+	college = models.CharField(choices=College, default='NONE', max_length=7)
+
 
 	def __unicode__(self):
 		if self.user is not None:
@@ -128,13 +130,13 @@ class SubmitReport(models.Model):
 	end_date = models.DateField(auto_now_add=False, auto_now=False, default=None)
 	start_time = models.TimeField(auto_now_add=False, auto_now=False, default=None)
 	end_time = models.TimeField(auto_now_add=False, auto_now=False, default=None)
-	courses = models.ManyToManyField('Course')
+	courses = models.ManyToManyField('Course', blank=True)
 	service_type = models.CharField(max_length=14, null=True, blank=False, choices=ServiceType, default='default')
 	status = models.CharField(max_length=8, choices=ApprovalStatus, default='PENDING', null=False, blank=False)
 	summary = models.CharField(max_length=150, null=True, blank=True)
 	submitter = models.ForeignKey(Student, null=True, on_delete=models.PROTECT)
 	objects = SubmitReportManager()
-
+	partner = models.ForeignKey('Partner', null=True, blank=False)
 
 	def __unicode__(self):
 		return (self.submitter.__unicode__())
@@ -145,7 +147,7 @@ class Course(models.Model):
 	college = models.CharField(choices=College, default='NONE', max_length=7)
 	course_number = models.CharField(max_length=10, null=True)
 	CRN = models.CharField(validators=[numeric], max_length=5, unique=True)
-
+	section = models.IntegerField(null=True, blank=False)
 	def __unicode__(self):
 		return self.course_number + ": " + self.CRN
 
@@ -153,6 +155,7 @@ class Course(models.Model):
 class Partner(models.Model):
 	name = models.CharField(max_length=100, null=True, default='New Partner Organization', unique=True)
 	is_active = models.BooleanField(default=True, null=False)
+	courses = models.ManyToManyField(Course)
 
 	def __unicode__(self):
 		return self.name
