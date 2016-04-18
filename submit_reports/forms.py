@@ -1,7 +1,6 @@
 from django import forms
 from datetime import datetime
-from django.forms import MultipleChoiceField
-from django.forms import Textarea, ModelForm, TimeInput, DateInput, RadioSelect, CheckboxSelectMultiple, ModelMultipleChoiceField, ModelChoiceField
+from django.forms import MultipleChoiceField, BooleanField, Textarea, ModelForm, TimeInput, DateInput, RadioSelect, CheckboxSelectMultiple, ModelMultipleChoiceField, ModelChoiceField
 from .models import SubmitReport, Partner, Course
 from django.db import models
 from django.contrib.auth.models import User
@@ -49,7 +48,7 @@ class AddPartnerForm(forms.ModelForm):
 		fields = ['name', 'is_active']
 
 class AddStudentForm(forms.ModelForm):
-
+	is_TA = BooleanField(label="Is this student a TA")
 	courses = ModelMultipleChoiceField(queryset=Course.objects.all(),
 		widget=FilteredSelectMultiple(("Course"), False))
 	grad_year = forms.IntegerField(min_value=datetime.now().year,
@@ -92,7 +91,6 @@ class AddFacultyForm(forms.ModelForm):
 		print cleaned_data['password']
 
 
-
 class AddCourseForm(forms.ModelForm):
 	class Meta:
 		model = Course
@@ -102,6 +100,7 @@ class AddCourseForm(forms.ModelForm):
 		super(AddCourseForm, self).__init__(*args, **kwargs)
 		for key in self.fields:
 	   		self.fields[key].required = True
+
 
 class ReportSearchForm(forms.ModelForm):
 	class Meta:
