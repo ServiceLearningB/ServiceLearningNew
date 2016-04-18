@@ -176,64 +176,27 @@
 	list-style-type: none;
 	padding: 0px;
 }
-
-/* Date and time fields */
-.EZ_Hoursform div:nth-child(2) {
-	width: 50%;
-	position: relative;
-	float: left;
-	text-align: left;
-	font-weight: bold;
-}
-/* Date and time inputs */
-.EZ_Hoursform div:nth-child(2) input {
-  width:100%;
-	position: relative;
-	margin-top:6px;
-	margin-bottom: 6px;
-	font-weight: normal;
-}
-/* Start Time input */
-.EZ_Hoursform div:nth-child(2) input:nth-child(2) {
-	margin-bottom:-12px;
-}
-/* Course Select, Service Type Select and Partner select container */
-.EZ_Hoursform div:nth-child(3), .EZ_Hoursform div:nth-child(4), 
-.EZ_Hoursform div:nth-child(5) {
-	width:50%;
-	position: relative;
-	float: right;
-	padding-left: 4%;
-	padding-right: 2.5%;
-	text-align: left;
-	margin-top:-20px;
-	font-weight: bold;
-	margin-bottom: 6px;
-}
-
-/* Course Select, Service Type Select and Partner select options */
-.EZ_Hoursform div:nth-child(3) label, .EZ_Hoursform div:nth-child(4) label, 
-.EZ_Hoursform div:nth-child(5) select {
-	font-weight: normal;
-}
-
+/*
 .EZ_Hoursform p {
 	position: relative;
 	float: left;
 	width: 100%;
-}
+} */
 
-.EZ_Hoursform p label {
+.EZ_Hoursform label {
 	position: relative;
 	float: left;
 	width: 20%;
 	text-align: left;
 	margin-left: 2.5%;
-	padding-top: 3px;
+	padding-top: 8px;
+}
+.EZ_Hoursform label, .EZ_Hoursform input {
+	margin-top: 12px;
 }
 
-.EZ_Hoursform p input, .EZ_Hoursform p select, .EZ_Hoursform p textarea, .EZ_Hoursform .errorlist li,
-.EZ_Hoursform #id_courses, .EZ_Hoursform #id_service_type {
+.EZ_Hoursform input, .EZ_Hoursform select, .EZ_Hoursform textarea, .EZ_Hoursform .errorlist li,
+.EZ_Hoursform #id_courses ul, .EZ_Hoursform #id_service_type ul {
 	position: relative;
 	float: right;
 	width: 75%;
@@ -253,14 +216,28 @@
 	text-align:left;
 	margin-bottom:6px;
 }
+.EZ_Hoursform #id_courses li label, .EZ_Hoursform #id_service_type li label {
+	width:100%;
+	text-align:left;
+}
+.EZ_Hoursform #id_courses li label input, .EZ_Hoursform #id_service_type li label input {
+	width:6px;
+	text-align:left;
+	position: relative;
+	float: left;
+}
 
-.EZ_Hoursform p select {
+.EZ_Hoursform #id_courses, .EZ_Hoursform #id_service_type {
+	width:100%;
+}
+
+.EZ_Hoursform select {
 	border: 1px #ccc solid;
 	border-radius: 4px;
 	min-height:30px;
 }
 
-.EZ_Hoursform p select option {
+.EZ_Hoursform select option {
 	position: relative;
 	float: left;
 	width:100%;
@@ -273,13 +250,13 @@
 	
 }
 
-.EZ_Hoursform p select:active, .EZ_Hoursform p select:focus {
+.EZ_Hoursform select:active, .EZ_Hoursform p select:focus {
 	box-shadow: 0px 0px 2px rgb(26,187,207);
 	outline:none;
 	transition: all 0.3s ease;
 }
 
-.EZ_Hoursform p textarea {
+.EZ_Hoursform textarea {
 	border: 1px #ccc solid;
 	border-radius: 4px;
 	resize:vertical;
@@ -289,11 +266,11 @@
 	padding-right:12px;
 }
 
-.EZ_Hoursform p textarea:focus {
+.EZ_Hoursform textarea:focus {
 	outline:none;
 }
 
-.EZ_Hoursform p select {
+.EZ_Hoursform select {
 	transition: all 0.3s ease;
 }
 
