@@ -39,7 +39,7 @@ urlpatterns = [
     url(r'^accounts/faculty_view/$', faculty_view, name='faculty_view_page'),
     url(r'^accounts/ta_view/$', ta_view, name='ta_view_page'),
     url(r'^admin/admin_view/$', admin_view, name='admin_view_page'),
-
+    url(r'^$', login_view, name='login_page'),
 ]
 
 #authentication urls
