@@ -119,7 +119,6 @@ class ReportSearchForm(forms.ModelForm):
 
 		user_type = kwargs.pop('user_type')
 
-
 		super(ReportSearchForm, self).__init__(*args, **kwargs)
 
 		self.fields['courses'].choices = user_type.course_set.all()

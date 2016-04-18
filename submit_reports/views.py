@@ -94,42 +94,40 @@ def faculty_view(request):
 ########################################################################## 
 from django.template.backends.utils import csrf_input_lazy, csrf_token_lazy
 @login_required
-@user_passes_test(lambda u: u.is_superuser or u.faculty is not None)
+@user_passes_test(lambda u: hasattr(u, 'staff'))
 def ta_view(request):
 	
 	reports = SubmitReport.objects.query_pending_reports()
 	reports = reports.filter(courses__in=request.user.staff.courses.all()).distinct()
 
-	form = ReportSearchForm(request.POST)
+	form = ReportSearchForm(request.POST, user_type=request.user.faculty)
 	courses = request.user.faculty.course_set.all()
-	df = pd.DataFrame(list(reports.values(
-		'first_name', 'last_name', 'start_time', 'end_time', 'summary')))
+	course_choices = []
+	for course in courses:
+		course_choices += [[course.pk, course]]
+
+	df = pd.DataFrame(list(reports.values('first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
+	form.fields['courses'].choices = course_choices
 	from django.template import Template, Context
 	if form.is_valid():
-		reports = form.filter_queryset(request, reports)
+		reports = form.filter_queryset(reports)
 		df = pd.DataFrame(list(reports.values(
-		'first_name', 'last_name', 'start_time', 'end_time', 'summary')))
+		'first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
 	if reports:
 		table = df.to_html(escape=False, index=False,
-		columns=['first_name', 'last_name', 'start_time', 'end_time', 'summary'],
+		columns=['first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary'],
 		formatters={
-			'summary': (lambda s: '<abbr title=\"' + s + '\">Summary</abbr>'),
-			'submitter': (lambda s: Student.objects.get(pk=s).__unicode__()),
-			'start_time': (lambda s: readable_datetime(s)),
-			'end_time': (lambda s: readable_datetime(s)),
+			'summary': (lambda s: '<abbr title=\"' + s + '\">Notes</abbr>'),
+			# 'start_time': (lambda s: readable_datetime(s)),
+			# 'end_time': (lambda s: readable_datetime(s)),
 		})
 	else:
 		table = "No reports matched your search."
 
-	temp = Template("""<form method='POST' action=''>
-		{% csrf_token %}
-		{{form.as_p}}
-		<input type='submit' value="Search", action="">
-		</form>"""
-		+ '\n' + table)
-	template = Tplate(temp)
-	context = Context({'form': form,})
-	return HttpResponse(template.render(context=context, request=request))
+	return render(request, "faculty_view.html", {'form': form,
+			'table': table,
+		})
+
 
 
 #Related to login
