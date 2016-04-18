@@ -14,6 +14,22 @@ import pandas as pd
 from django.core.mail import send_mail
 # Create your views here.
 
+class FilteredListView(FormMixin, ListView):
+	def get_form_kwargs(self):
+		return {
+			'initial': self.get_initial(),
+			'prefix': self.get_prefix,
+			'data': self.request.GET or None
+		}
+
+	def get(self, request, *args, **kwargs):
+		self.object_list = self.get_queryset()
+		form = self.get_form(self.get_form_class())
+		if form.is_valid():
+			self.object_list = form.filter_queryset(request, self.object_list)
+
+		context = self.get_context_data(form=form, object_list=self.object_list)
+		return self.render(request, context)
 
 @login_required(redirect_field_name=None)
 @user_passes_test(lambda u: hasattr(u, 'student'), redirect_field_name=None,
@@ -73,6 +89,45 @@ def faculty_view(request):
 	return render(request, "faculty_view.html", {'form': form,
 			'table': table,
 		})
+
+#View for TA
+########################################################################## 
+from django.template.backends.utils import csrf_input_lazy, csrf_token_lazy
+@login_required
+@user_passes_test(lambda u: hasattr(u, 'staff'))
+def ta_view(request):
+	
+	reports = SubmitReport.objects.query_pending_reports()
+	reports = reports.filter(courses__in=request.user.staff.courses.all()).distinct()
+
+	form = ReportSearchForm(request.POST, user_type=request.user.faculty)
+	courses = request.user.faculty.course_set.all()
+	course_choices = []
+	for course in courses:
+		course_choices += [[course.pk, course]]
+
+	df = pd.DataFrame(list(reports.values('first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
+	form.fields['courses'].choices = course_choices
+	from django.template import Template, Context
+	if form.is_valid():
+		reports = form.filter_queryset(reports)
+		df = pd.DataFrame(list(reports.values(
+		'first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
+	if reports:
+		table = df.to_html(escape=False, index=False,
+		columns=['first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary'],
+		formatters={
+			'summary': (lambda s: '<abbr title=\"' + s + '\">Notes</abbr>'),
+			# 'start_time': (lambda s: readable_datetime(s)),
+			# 'end_time': (lambda s: readable_datetime(s)),
+		})
+	else:
+		table = "No reports matched your search."
+
+	return render(request, "faculty_view.html", {'form': form,
+			'table': table,
+		})
+
 
 
 #Related to login

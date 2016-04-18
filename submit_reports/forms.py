@@ -122,7 +122,6 @@ class ReportSearchForm(forms.ModelForm):
 		if 'user_type' in kwargs:
 			user_type = kwargs.pop('user_type')
 
-
 		super(ReportSearchForm, self).__init__(*args, **kwargs)
 		if user_type is not None:
 			self.fields['courses'].choices = user_type.course_set.all()
