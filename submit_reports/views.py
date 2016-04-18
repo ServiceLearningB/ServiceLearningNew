@@ -199,7 +199,7 @@ your current password is: """ + form.cleaned_data['password'] + '\n' +
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'adminstaff'))
+@user_passes_test(lambda u: u.is_superuser)
 def add_course_view(request):
 	'''Page for adding faculty'''
 	form = AddCourseForm(request.POST or None)
