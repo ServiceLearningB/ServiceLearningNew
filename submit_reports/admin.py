@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import SubmitReport, Student, Faculty, Partner, Course, Staff, AdminStaff
+from .models import SubmitReport, Student, Faculty, Partner, Course, Staff
 
 class SubmitReportAdmin(admin.ModelAdmin):
 	class Meta:
@@ -29,14 +29,9 @@ class StaffAdmin(admin.ModelAdmin):
 	class Meta:
 		model = Staff
 
-class AdminStaffAdmin(admin.ModelAdmin):
-	class Meta:
-		model = AdminStaff
-
 admin.site.register(SubmitReport, SubmitReportAdmin)
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Faculty, FacultyAdmin)
 admin.site.register(Partner, PartnerAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Staff, StaffAdmin)
-admin.site.register(AdminStaff, AdminStaffAdmin)
