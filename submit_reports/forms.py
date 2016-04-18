@@ -1,5 +1,5 @@
 from django import forms
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.forms import MultipleChoiceField, BooleanField, Textarea, ModelForm, TimeInput, DateInput, RadioSelect, CheckboxSelectMultiple, ModelMultipleChoiceField, ModelChoiceField
 from .models import SubmitReport, Partner, Course
 from django.db import models
@@ -32,9 +32,12 @@ class SubmitReportForm(forms.ModelForm):
 		end_time = cleaned_data['end_time']
 		start_date = cleaned_data['start_date']
 		end_date = cleaned_data['end_date']
-
+		twelve_hours = timedelta(hours=12)		
+		
 		if (datetime.combine(end_date, end_time) <= datetime.combine(start_date, start_time)):
 			raise forms.ValidationError("Start time must come before end time.")
+		if ((datetime.combine(end_date, end_time) - datetime.combine(start_date, start_time)) > twelve_hours):
+			raise forms.ValidationError("Max allowed duration is 12 hours.")
 		return self.cleaned_data
 
 	def __init__(self, *args, **kwargs):

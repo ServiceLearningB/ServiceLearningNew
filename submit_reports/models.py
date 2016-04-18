@@ -28,9 +28,9 @@ ApprovalStatus = (
 
 ServiceType = (
 		('DIRECT_SERVICE', 'Direct Service'),
-		('TRAINING', 'Training'),
-		('IND_RESEARCH', 'Individual Research'),
-		('TEAM_RESEARCH', 'Team Research'),
+		('TRAINING', 'Trainings & Orientations'),
+		('IND_RESEARCH', 'Individual Research & Planning'),
+		('TEAM_RESEARCH', 'Team Research & Planning'),
 	)
 
 # User Classes
