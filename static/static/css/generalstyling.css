@@ -62,6 +62,13 @@
 .EZ_col .EZ_studentlogindiv .btn:nth-child(2) {
 	margin-left:3%;
 }
+.EZ_col .EZ_studentlogindiv .btn:nth-child(3) {
+	margin-top:12px;
+	width:75% !important;
+	position: relative;
+	float: left;
+	left:12.5%;
+}
 
 .EZ_col p {
 	text-align: center;
@@ -294,6 +301,7 @@
 	width: 35%;
 	margin: 1.5%;
 }
+
 .EZ_Hoursform .EZ_submitrow {
 	width: 100%;
 	position:relative;
