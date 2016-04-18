@@ -99,16 +99,6 @@ class Staff(models.Model):
 
 ################################################################
 
-class AdminStaff(models.Model):
-	class Meta:
-		verbose_name = 'Administrator'
-		verbose_name_plural = 'Administrators'
-
-	user = models.OneToOneField(User, null=True)
-
-	def __unicode__(self):
-		return self.user.first_name + " " + self.user.last_name
-
 # Data Classes
 ######################################################
 
