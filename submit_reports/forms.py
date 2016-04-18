@@ -14,8 +14,7 @@ class SubmitReportForm(forms.ModelForm):
 
 	class Meta:
 		model = SubmitReport
-		fields = ['start_time', 'end_time', 'start_date', 'end_date', 'courses', 'service_type', 'summary']
-
+		exclude= ['submitter', 'status']
 		widgets = {
 			'summary': Textarea(attrs={'cols': 50, 'rows': 3}),
 			'service_type': RadioSelect(),
@@ -108,24 +107,27 @@ class AddCourseForm(forms.ModelForm):
 class ReportSearchForm(forms.ModelForm):
 	class Meta:
 		model = SubmitReport
-		fields = ['first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'courses', 'service_type', 'status']
+		fields = '__all__'
 		widgets = {
 			'start_time': TimeInput(),
 			'end_time': TimeInput(),
 			'start_date': DateInput(attrs={'class': 'datepicker'}),
 			'end_date': DateInput(attrs={'class': 'datepicker'}),
-			'courses': CheckboxSelectMultiple(),
+			'courses': FilteredSelectMultiple(("Course"), False),
 			'service_type': RadioSelect(),
 		}
 
 	def __init__(self, *args, **kwargs):
-
-		user_type = kwargs.pop('user_type')
+		user_type = None
+		if 'user_type' in kwargs:
+			user_type = kwargs.pop('user_type')
 
 
 		super(ReportSearchForm, self).__init__(*args, **kwargs)
-
-		self.fields['courses'].choices = user_type.course_set.all()
+		if user_type is not None:
+			self.fields['courses'].choices = user_type.course_set.all()
+		else:
+			self.fields['courses'].choices = Course.objects.all()
 		for key in self.fields:
 			self.fields[key].required = False
 
@@ -136,10 +138,14 @@ class ReportSearchForm(forms.ModelForm):
 			print queryset
 		if self.cleaned_data['last_name']:
 			temp = temp.filter(last_name__icontains=self.cleaned_data['last_name'])
-		if self.cleaned_data['start_date'] and self.cleaned_data['start_time']:
-			temp = temp.filter(start_date__gte=self.cleaned_data['start_date']).filter(start_time__gte=self.cleaned_data['start_time'])
-		if self.cleaned_data['end_date'] and self.cleaned_data['end_time']:
-			temp = temp.filter(end_date__gte=self.cleaned_data['end_date']).filter(start_time__gte=self.cleaned_data['end_date'])
+		if self.cleaned_data['start_date']:
+			temp = temp.filter(start_date__gte=self.cleaned_data['start_date'])
+			if self.cleaned_data['start_time']:
+				temp = temp.filter(start_time__gte=self.cleaned_data['start_time'])
+		if self.cleaned_data['end_date']:
+			temp = temp.filter(end_date__gte=self.cleaned_data['end_date'])
+			if self.cleaned_data['end_time']:
+				temp = temp.filter(start_time__gte=self.cleaned_data['end_date'])
 		if self.cleaned_data['courses']:
 			temp2 = SubmitReport.objects.none()
 			for choice in self.cleaned_data['courses']:
@@ -148,5 +154,8 @@ class ReportSearchForm(forms.ModelForm):
 		if self.cleaned_data['service_type']:
 			print('got here')
 			temp = temp.filter(service_type__exact=self.cleaned_data['service_type'])
-
+		if self.cleaned_data['status']:
+			temp = temp.filter(status__exact=self.cleaned_data['service_type'])
+		if self.cleaned_data['partner']:
+			temp = temp.filter(partner__exact=self.cleaned_data['partner'])
 		return temp

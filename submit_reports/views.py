@@ -143,7 +143,7 @@ def add_partners_view(request):
 		if '_add_another' in request.POST:
 			return HttpResponseRedirect('/admin/add_partner/')
 		return HttpResponseRedirect('/admin/home/')
-	return render(request, "add_partner.html")
+	return render(request, "add_partner.html", {'form': form})
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser or hasattr(u, 'staff'))
@@ -214,3 +214,34 @@ def add_course_view(request):
 			return HttpResponseRedirect('/admin/add_course/')
 		return HttpResponseRedirect('/admin/home/')
 	return render(request, "add_course.html", {'form': form,})
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def admin_view(request):
+	reports = SubmitReport.objects.all()
+	form = ReportSearchForm(request.POST)
+	courses = Course.objects.all()
+	course_choices = []
+	for course in courses:
+		course_choices += [[course.pk, course]]
+
+	df = pd.DataFrame(list(reports.values('first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
+	form.fields['courses'].choices = course_choices
+	if form.is_valid():
+		reports = form.filter_queryset(reports)
+		df = pd.DataFrame(list(reports.values(
+		'first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
+	if reports:
+		table = df.to_html(escape=False, index=False,
+		columns=['first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary'],
+		formatters={
+			'summary': (lambda s: '<abbr title=\"' + s + '\">Notes</abbr>'),
+			# 'start_time': (lambda s: readable_datetime(s)),
+			# 'end_time': (lambda s: readable_datetime(s)),
+		})
+	else:
+		table = "No reports matched your search."
+
+	return render(request, "admin_view.html", {'form': form,
+			'table': table,
+		})
