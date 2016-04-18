@@ -277,6 +277,9 @@
 	float:right;
 	text-align: left;
 }
+.EZ_serviceTypeSelect, .EZ_courseSelect, .EZ_facultyEndDates label, .EZ_facultyStartDates label {
+	margin-top: 10px;
+} 
 .EZ_courseSelect {
 	margin-top:-114px;
 }
