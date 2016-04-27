@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+<script>
+$(document).ready(function() {
+    $('.datepicker').datepicker();
+});
+</script>
+{{ form.media }}
+
+
+{% endblock %}
+
+{% block content %}
+<div class="col-md-2"> </div>
+<div class="col-md-8 EZ_col">
+<center>
+<h1>Student Time Sheets Search</h1>
+
+<form method="POST" action="" class="EZ_facultySearchResults">
+{% csrf_token %}
+<table style="width: 100%">
+{{ formset.management_form }}
+{% for report in formset %}
+
+<tr>
+	<td>{{ report }}</td>
+	<td><span>{{ report.instance }}</span></td>
+	<td><span>Start: {{report.instance.start_date}} at {{ report.instance.start_time }}</span></td>
+	<td><span>End: {{report.instance.end_date}} at {{ report.instance.end_time }}</span></td>
+</tr>
+
+{% endfor %}
+</table>
+<input class="btn btn-success EZ_facultySubmitBtn" type="submit" value="Save Changes" action=""/>
+</form>
+Click <a href="/accounts/ta_view/">here</a> to return to the search page.
+</center>
+</div>
+{% endblock%}

@@ -1,6 +1,7 @@
 from django.shortcuts import render, RequestContext
 from .forms import *
 import datetime
+from django.forms import modelformset_factory
 from .models import SubmitReport, Student, Faculty, Staff, Course
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.contrib import auth
@@ -99,45 +100,59 @@ def ta_view(request):
 	
 	reports = SubmitReport.objects.query_pending_reports()
 	reports = reports.filter(courses__in=request.user.staff.courses.all()).distinct()
+	ApproveReportFormSet = modelformset_factory(SubmitReport, form=ReportApproveForm, extra=0)
 
-	form = ReportSearchForm(request.POST, user_type=request.user.staff)
-	courses = request.user.staff.courses.all()
-	course_choices = []
-	for course in courses:
-		course_choices += [[course.pk, course]]
 
-	df = pd.DataFrame(list(reports.values('pk','first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
-	form.fields['courses'].choices = course_choices
-	from django.template import Template, Context
-	if form.is_valid():
-		reports = form.filter_queryset(reports)
-		df = pd.DataFrame(list(reports.values(
-		'pk','first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary')))
-	if reports:
-		table = df.to_html(escape=False, index=False,
-		columns=['pk', 'first_name', 'last_name', 'start_date', 'start_time', 'end_date', 'end_time', 'summary'],
-		formatters={
+	if request.method == 'POST':
+		form = ReportSearchForm(request.POST, user_type=request.user.staff)
+		courses = request.user.staff.courses.all()
+		course_choices = []
+		for course in courses:
+			course_choices += [[course.pk, course]]
+		form.fields['courses'].choices = course_choices
 
-			'summary': (lambda s: '<abbr title=\"' + s + '\">Notes</abbr>'),
-			'pk': (lambda r: form_to_html(ReportApproveForm(request.POST or None, instance=SubmitReport.objects.get(pk=r)))),
+		if form.is_valid():
+			reports = form.filter_queryset(reports)
 
-			# 'start_time': (lambda s: readable_datetime(s)),
-			# 'end_time': (lambda s: readable_datetime(s)),
-		})
+		import pickle
+		request.session['search_results'] = pickle.dumps(reports.query)
+
+		return HttpResponseRedirect('/accounts/ta_search_results/')
 	else:
-		table = "No reports matched your search."
+		form = ReportSearchForm(request.POST, user_type=request.user.staff)
+		courses = request.user.staff.courses.all()
+		course_choices = []
+		for course in courses:
+			course_choices += [[course.pk, course]]
+		form.fields['courses'].choices = course_choices
 
-	return render(request, "faculty_view.html", {'form': form,
-			'table': table,
-		})
+		report_forms = ApproveReportFormSet(queryset=reports)
 
-def form_to_html(form):
-	if form.is_valid():
-		SubmitReport.objects.get(pk=form.instance.pk)
-	return form.as_p()
-# def ta_view(request):
-# 	form = ReportApproveForm(request.POST or None)
-# 	return render(request, "add_staff.html", {'form': form,})
+		return render(request, "ta_view.html", {'form': form,
+				'report_forms': report_forms,
+			})
+
+@login_required
+@user_passes_test(lambda u: hasattr(u, 'staff'))
+def ta_results_view(request):
+	import pickle
+	ApproveReportFormSet = modelformset_factory(SubmitReport, form=ReportApproveForm, extra=0)
+	reports = SubmitReport.objects.query_pending_reports().filter(courses__in=request.user.staff.courses.all()).distinct()
+	reports.query = pickle.loads(request.session['search_results'])
+	print reports
+	if request.method == 'POST':
+		report_forms = ApproveReportFormSet(request.POST, queryset=reports)
+
+		if report_forms.is_valid():
+			report_forms.save()
+			reports.filter(status__exact='PENDING')
+		return render(request, "ta_search_results.html", {'formset': report_forms,})
+	else:
+		report_forms = ApproveReportFormSet(queryset=reports)
+		print report_forms
+
+		return render(request, "ta_search_results.html", {'formset': report_forms,})
+
 #Related to login
 ##############################################################
 
