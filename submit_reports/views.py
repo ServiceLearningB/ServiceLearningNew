@@ -201,7 +201,7 @@ def invalid_login_view(request):
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(lambda u: u.is_staff)
 def admin_home_view(request):
 	"""Homepage for logged in admin"""
 	return render(request, 'admin_loggedin.html',
@@ -211,7 +211,7 @@ def admin_home_view(request):
 ##########################################################################
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(lambda u: u.is_staff)
 def add_partners_view(request):
 	'''Page for adding partners'''
 	form = AddPartnerForm(request.POST or None)
@@ -224,7 +224,7 @@ def add_partners_view(request):
 	return render(request, "add_partner.html", {'form': form})
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser or hasattr(u, 'staff'))
+@user_passes_test(lambda u: u.is_staff or hasattr(u, 'staff'))
 def add_student_view(request):
 	'''Page for adding students'''
 	form = AddStudentForm(request.POST or None)
@@ -253,7 +253,7 @@ your current password is: """ + form.cleaned_data['password'] + '\n' +
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(lambda u: u.is_staff)
 def add_faculty_view(request):
 	'''Page for adding faculty'''
 	form = AddFacultyForm(request.POST or None)
@@ -277,7 +277,7 @@ your current password is: """ + form.cleaned_data['password'] + '\n' +
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(lambda u: u.is_staff)
 def add_course_view(request):
 	'''Page for adding faculty'''
 	form = AddCourseForm(request.POST or None)
@@ -294,7 +294,7 @@ def add_course_view(request):
 	return render(request, "add_course.html", {'form': form,})
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(lambda u: u.is_staff)
 def admin_view(request):
 	reports = SubmitReport.objects.all()
 	form = ReportSearchForm(request.POST)
