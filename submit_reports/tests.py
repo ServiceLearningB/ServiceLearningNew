@@ -13,15 +13,13 @@ class StudentUserTestCase(TestCase):
 
 	def test_student_creation(self):
 		# With User
-		self.student = models.Student.objects.create_student(self.user, 12345, '2018')
+		self.student = models.Student.objects.create_student(self.user, '2018')
 		self.assertEqual(self.user, self.student.user)
 		self.assertEqual(self.user.first_name, self.student.first_name)
 		self.assertEqual(self.user.last_name, self.student.last_name)
-		self.assertEqual(self.student.nuid, 12345)
 		self.assertEqual(self.student.grad_year, '2018')
 		# Without user
-		self.student2 = models.Student.objects.create_student_without_user("test", "test", 98765, "2019")
-		self.assertEqual(self.student2.nuid, 98765)
+		self.student2 = models.Student.objects.create_student_without_user("test", "test", "2019")
 		self.assertEqual(self.student2.grad_year, '2019')
 
 class StudentSubmitViewTestCase(TestCase):
@@ -32,6 +30,6 @@ class StudentSubmitViewTestCase(TestCase):
 		
 	def test_access_denied_to_anon(self):
 		response = self.client.get(reverse('submit_page'), follow=True)
-		self.assertRedirects(response, reverse('login_page'))
+		self.assertRedirects(response, '/accounts/login/')
 		response = self.client.get(reverse('submit_page'), follow=True)
-		self.assertRedirects(response, reverse('login_page'))
+		self.assertRedirects(response, '/accounts/login/')

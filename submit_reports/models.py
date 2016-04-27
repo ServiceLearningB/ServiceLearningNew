@@ -40,15 +40,17 @@ ServiceType = (
 ########################################################
 class StudentManager(models.Manager):
 	def create_student_without_user(self, first_name, last_name, grad_year):
-		student = self.create(first_name=first_name,
-			last_name=last_name,
-			grad_year=grad_year)
+		student = self.create()
+		student.first_name=first_name
+		student.last_name=last_name
+		student.grad_year=grad_year
 		return student
 	
 	def create_student(self, user, grad_year):
-		student = self.create(user=user, first_name=user.first_name,
+		student = self.create_student_without_user(first_name=user.first_name,
 			last_name=user.last_name,
 			grad_year=grad_year)
+		student.user = user
 		return student
 
 class Student(models.Model):

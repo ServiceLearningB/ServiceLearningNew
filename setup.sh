@@ -1,5 +1,5 @@
-#This script is to only be run independantly on a new EC2 instance
-#It should never run from the actual ServiceLearningNew Repo
+# This script installs all the correct basic software onto the ec2 server
+# Should only ever have to be run once
 
 cd ~
 
@@ -35,11 +35,10 @@ pip install -r requirements.txt
 
 echo "pip install complete"
 
-python manage.py makemigrations
-python manage.py migrate
 
-echo "migration complete"
+down vote
+Here there is a simple version of the script to create a superuser:
 
-sudo nohup python manage.py runserver &
+echo "from django.contrib.auth.models import User; User.objects.create_superuser('ubuntu', 'admin@example.com', 'SeaSalt52')" | python manage.py shell
 
-echo "application is running on port 8000"
+echo "created super user USERNAME:ubuntu, PASSWORD:SeaSalt52"
