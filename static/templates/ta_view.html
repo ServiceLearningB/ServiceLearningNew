@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+<script>
+$(document).ready(function() {
+    $('.datepicker').datepicker();
+});
+</script>
+{{ form.media }}
+
+
+{% endblock %}
+
+{% block content %}
+<div class="col-md-2"> </div>
+<div class="col-md-8 EZ_col">
+<center>
+<h1>Student Time Sheets Search</h1>
+<form method="POST" action='' class="container EZ_container EZ_SearchField">
+	{% csrf_token %}
+	<fieldset class="EZ_facultyNameSearch">
+		<label id="firstName-label">
+			<span>
+				{{ form.first_name.label}}
+			</span>
+			{{ form.first_name }}{{ form.first_name.errors}}
+		</label>
+		<label id="lastName-label">
+			<span>
+				{{ form.last_name.label}}
+			</span>
+			{{ form.last_name }}{{ form.last_name.errors}}
+		</label>
+	</fieldset>
+
+
+
+	<fieldset class="EZ_facultyStartDates">
+		<label class="EZ_startDate">
+			<span>
+				{{ form.start_date.label}}
+			</span>
+			{{ form.start_date }}{{ form.start_date.errors}}
+		</label>
+		<label class="EZ_startTime">
+			<span>
+				{{ form.start_time.label}}
+			</span>
+			{{ form.start_time }}{{ form.start_time.errors}}
+		</label>
+	</fieldset>
+
+
+	<fieldset class="EZ_facultyEndDates">
+		<label class="EZ_endDate">
+			<span>
+				{{ form.end_date.label}}
+			</span>
+			{{ form.end_date }}{{ form.end_date.errors}}
+		</label>
+		<label class="EZ_endTime">
+			<span>
+				{{ form.end_time.label}}
+			</span>
+			{{ form.end_time }}{{ form.end_time.errors}}
+		</label>
+	</fieldset>
+
+	<label class="EZ_serviceTypeSelect">
+		<span>
+			{% for t in form.service_type %}
+			{{ t }}
+			<br>
+			{% endfor %}
+		</span>
+	</label>
+
+	<label class="EZ_courseSelect">
+		{% for course in form.courses %}
+		{{course}}
+		<br>
+		{% endfor %}
+	</label>
+
+
+	<center><input class="btn btn-success EZ_facultySubmitBtn" type="submit" value="Search" action=""/></center>
+<!-- </form>
+
+<form method="POST" action="" class="EZ_facultySearchResults">
+{% csrf_token %}
+<table style="width: 100%">
+{{ report_forms.management_form }}
+{% for report in report_forms %}
+
+<tr>
+	<td>{{ report }}</td>
+	<td><span>{{ report.instance }}</span></td>
+	<td><span>Start: {{report.instance.start_date}} at {{ report.instance.start_time }}</span></td>
+	<td><span>End: {{report.instance.end_date}} at {{ report.instance.end_time }}</span></td>
+</tr>
+
+{% endfor %}
+</table>
+<input class="btn btn-success EZ_facultySubmitBtn" type="submit" value="Save Changes" action=""/>
+</form> -->
+</center>
+</div>
+{% endblock%}

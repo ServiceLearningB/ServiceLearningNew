@@ -6,6 +6,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
+ApprovalStatus = (
+		('PENDING', 'PENDING'),
+		('APPROVED', 'APPROVED'),
+		('REJECTED', 'REJECTED'),
+	)
 
 class SubmitReportForm(forms.ModelForm):
 
@@ -140,7 +145,6 @@ class ReportSearchForm(forms.ModelForm):
 		temp = queryset
 		if self.cleaned_data['first_name']:
 			temp = temp.filter(first_name__icontains=self.cleaned_data['first_name'])
-			print queryset
 		if self.cleaned_data['last_name']:
 			temp = temp.filter(last_name__icontains=self.cleaned_data['last_name'])
 		if self.cleaned_data['start_date']:
@@ -170,6 +174,3 @@ class ReportApproveForm(forms.ModelForm):
 	class Meta:
 		model = SubmitReport
 		fields = ['status']
-		widgets = {
-			'status': CheckboxSelectMultiple()
-		}
